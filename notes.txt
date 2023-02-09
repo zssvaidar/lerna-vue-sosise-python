@@ -1,0 +1,11 @@
+sudo sysctl fs.inotify.max_user_watches=524288
+https://cli.vuejs.org/guide/creating-a-project.html#vue-create
+https://primevue.org/menubar
+https://www.npmjs.com/package/lerna
+https://sosise.github.io/sosise-docs/#/getting-started/installation
+
+npx lerna exec --parallel -- npm run watch
+npm -v
+8.8.0
+node -v
+v18.1.0

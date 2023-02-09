@@ -1,0 +1,23 @@
+:root {
+    --link-fs: 1.2rem;
+    --border-color: #dee2e6;
+}
+ul, h1, h2, h3, h4, h5 {
+    padding: 0;
+    margin: 0;
+}
+h1 {
+    font-size: 1.4rem;
+    font-weight: 600;
+}
+* {
+  font:var(--font-family);
+}
+
+.form-field * {
+    display: block;
+}
+.form-field small {
+    margin-top: 0.25rem;
+    margin-bottom: 0.35rem;
+}
