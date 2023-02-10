@@ -7,8 +7,12 @@ const router = express.Router();
 
 const infoController = new InfoController();
 
-router.get(`/data`, (request: Request, response: Response, next: NextFunction) => {
+router.get(`/api/data`, (request: Request, response: Response, next: NextFunction) => {
     infoController.fetchFilters(request, response, next);
+});
+
+router.get(`/api/data/search`, (request: Request, response: Response, next: NextFunction) => {
+    infoController.searchRequest(request, response, next);
 });
 
 const API_VERSION = 'v1';

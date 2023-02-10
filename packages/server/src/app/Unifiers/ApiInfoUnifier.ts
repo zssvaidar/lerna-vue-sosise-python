@@ -1,5 +1,6 @@
 import Validator from 'validatorjs';
 import ValidationException from 'sosise-core/build/Exceptions/Validation/ValidationException';
+import { isNil } from 'lodash';
 
 /**
  * If you need more validation rules, see: https://github.com/mikeerickson/validatorjs
@@ -8,7 +9,7 @@ export default class ApiInfoUnifier {
 
     private params: any;
     public filterData: boolean;
-    public dataOfFilter: number | null;
+    public dataOfFilter: number | null = null;
 
     /**
      * Constructor
@@ -45,6 +46,8 @@ export default class ApiInfoUnifier {
      */
     private map() {
         this.filterData = this.params.filter_data ?? false;
-        this.dataOfFilter = Number(this.params.data_of_filter) ?? null;
+        if(!isNil(this.params.data_of_filter))
+            this.dataOfFilter = Number(this.params.data_of_filter);
+        
     }
 }

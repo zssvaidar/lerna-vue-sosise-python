@@ -30,13 +30,6 @@ export default class SearchFilterAndGroup extends BaseSchema {
             {name: 'Пойск по городу'}
         ];
 
-        // Generate 10 rows
-        for (let row = 10; row < 20; row++) {
-            // data.push({
-            //     name: 'data' + row,
-            // });
-        }
-
         // Insert to table
         await this.dbConnection.table('search_filter').insert(data);
 
@@ -47,12 +40,12 @@ export default class SearchFilterAndGroup extends BaseSchema {
                 type: 'some_data'
             },
             {
-                domain: 'https://bb.kaznu.kz/', 
+                domain: 'https://sj.astanait.edu.kz/', 
                 url: 'some_data', 
                 type: 'some_data'
             },
             {
-                domain: 'https://sj.astanait.edu.kz/', 
+                domain: 'https://bb.kaznu.kz/', 
                 url: 'some_data', 
                 type: 'some_data'
             },

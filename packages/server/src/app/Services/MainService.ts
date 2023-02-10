@@ -3,6 +3,7 @@ import Database from "sosise-core/build/Database/Database";
 import serviceConfig from "../../config/serviceConfig"
 import InfoGroupType from "../Types/InfoGroupType";
 import InfoType from "../Types/InfoType";
+import SearchTagType from "../Types/SearchTagType";
 
 export default class MainService {
     private client: Knex;
@@ -18,6 +19,9 @@ export default class MainService {
      * - domain
      * - url
      * - type
+     * search_tag
+     * - text
+     * - info_by_group_object
      */
     /**
      * Constructor
@@ -54,4 +58,21 @@ export default class MainService {
             .join(join, joinBy, joinWith)
             .where('search_filter.id', filterId);
     }
+
+    public async searchTagWithText (text: string): Promise<SearchTagType[]> {
+        const tableName = 'search_tag';
+        const select = ['text', 'info_by_group_object as infoByGroupObject'];
+        return await this.client.table(tableName)
+            .select(select)
+            .where('text', 'like', `%${text}%`)
+    }
+
+    public async getInfoByValue (key: 'ids', value: any) {
+        const tableName = 'info_by_group';
+        const select = ['group_id as groupId', 'info_by_group.filter_id as filterId', 'info_content as infoContent'];
+
+        return await this.client.table(tableName)
+            .whereIn('id', value);     
+    }
+
 }
