@@ -3,7 +3,8 @@ import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router'
 import store from '@/store'
 import PageNotFound from '@/views/PageNotFound.vue'
 import WelcomeView from '@/views/WelcomeView.vue'
-import HomeView from '@/views/Home.vue'
+import SearchView from '@/views/SearchView.vue'
+import ApiView from '@/views/Dashboard/ApiView.vue'
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -12,9 +13,15 @@ const routes: Array<RouteRecordRaw> = [
     component: WelcomeView
   },
   {
-    path: '/data',
+    path: '/data-search',
     name: '',
-    component: HomeView,
+    component: SearchView,
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/api-list',
+    name: '',
+    component: ApiView,
     meta: { requiresAuth: true }
   },
   {

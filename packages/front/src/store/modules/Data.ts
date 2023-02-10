@@ -3,21 +3,26 @@ import axios from 'axios'
 
 export default {
   state: {
-    data: {}
+    data: {
+      filterGroup: [],
+      filters: []
+    }
   },
   mutations: {
-    fetchApiData (state, payload) {
-      state.data = {}
+    fetchData (state, payload) {
+      state.filterGroup = payload.filter_group ?? []
+      state.filters = payload.filters ?? []
     }
   },
   actions: {
-    async fetchApiData ({ commit }): Promise<void> {
+    async fetchData ({ commit }, data): Promise<void> {
+      const params = new URLSearchParams(data).toString()
       const response = await axios({
         method: 'get',
-        url: `${process.env.VUE_APP_API_URL}v1/scenarios`,
+        url: `${process.env.VUE_APP_API_URL}data?${params}`,
         withCredentials: true
       })
-      await commit('fetchApiData', response.data.data)
+      await commit('fetchData', response.data.data)
     }
 
   }

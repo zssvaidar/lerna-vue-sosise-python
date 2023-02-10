@@ -24,9 +24,17 @@ export default {
         },
         {
           label: 'Пойск',
-          visible: (args) => this.getUser().isAdmin,
           icon: 'pi pi-fw pi-users',
-          to: '/user-list',
+          to: '/data-search',
+          command: (event) => {
+            //
+          }
+        },
+        {
+          label: 'Api',
+          visible: (args) => this.getUser().isAdmin ?? false,
+          icon: 'pi pi-fw pi-database',
+          to: '/api-list',
           command: (event) => {
             //
           }

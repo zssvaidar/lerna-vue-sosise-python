@@ -9,7 +9,7 @@ import { Options, Vue } from 'vue-class-component'
     }
   })
 
-export default class HomeView extends Vue {
+export default class SearchView extends Vue {
   get getData () {
     // return this.$store.state.PbxConfig.languages
     return []
@@ -21,9 +21,25 @@ export default class HomeView extends Vue {
 }
 </script>
 <template>
-    <div class="scenario-config">4321
+    <div class="data-search">
+      <div class="wrapper">
+        <section>
+123
+        </section>
+      </div>
         <!-- <ScenarioConfigComponent
         :data="getData"
         /> -->
     </div>
 </template>
+
+<style scoped>
+.data-search .wrapper {
+  width: 75vw;
+  margin-left: auto;
+  margin-right: auto;
+}
+.data-search .wrapper section {
+  margin-top: 2rem;
+}
+</style>
