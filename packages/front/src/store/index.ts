@@ -1,5 +1,4 @@
 import { createStore } from 'vuex'
-import PbxConfig from './modules/PbxConfig'
 import AuthUser from './modules/AuthUser'
 
 export default createStore({
@@ -12,7 +11,6 @@ export default createStore({
   actions: {
   },
   modules: {
-    PbxConfig,
     AuthUser
   }
 })

@@ -49,6 +49,7 @@ export default {
     },
     async authorizeUser ({ commit }, payload) {
       console.log(payload)
+      console.log(`${process.env.VUE_APP_API_URL}v1/user/auth`)
       const response = await axios({
         method: 'post',
         url: `${process.env.VUE_APP_API_URL}v1/user/auth`,

@@ -26,6 +26,7 @@ export default class WelcomeView extends Vue {
 
   login (event) {
     event.preventDefault()
+    console.log(123)
     this.$store.dispatch('authorizeUser', this.authUser)
     this.states.loggingIn = false
     setTimeout(() => {
@@ -41,6 +42,7 @@ export default class WelcomeView extends Vue {
 
 <template>
   <HeaderComponent @loggingIn="states.loggingIn = true" :user="getUser" :logedIn="isLoggedIn" />
+
   <router-view />
 
   <Dialog id="login-pop-up" header="Авторизация" v-model:visible="states.loggingIn" @hide="resetState">

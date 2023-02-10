@@ -11,11 +11,17 @@ import 'primevue/resources/primevue.min.css'
 import 'primeicons/primeicons.css'
 import './assets/css/style.css'
 import Button from 'primevue/button'
+import Dialog from 'primevue/dialog'
 import Menubar from 'primevue/menubar'
+import InputText from 'primevue/inputtext'
+import Password from 'primevue/password'
 
 const app = createApp(App)
 
 app.component('Button', Button)
 app.component('Menubar', Menubar)
+app.component('Dialog', Dialog)
+app.component('InputText', InputText)
+app.component('Password', Password)
 
 app.use(PrimeVue).use(store).use(router).mount('#app')
