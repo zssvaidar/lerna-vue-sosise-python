@@ -1,4 +1,5 @@
 import UserRepository from "../app/Repositories/UserRepository";
+import MainService from "../app/Services/MainService";
 import UserService from "../app/Services/UserService";
 
 /**
@@ -30,6 +31,7 @@ const iocConfig = {
         UserService: () => new UserService(
             new UserRepository()
         ),
+        MainService: () => new MainService()
         /**
          * This service is included in the core out of the box
          * If you want to override LoggerService just uncomment this code and import all necessary modules

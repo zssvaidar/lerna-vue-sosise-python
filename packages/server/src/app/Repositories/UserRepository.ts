@@ -3,6 +3,7 @@ import UserRepositoryInterface from './UserRepositoryInterface';
 import { Knex } from 'knex';
 import UserType from '../Types/UserType';
 import UserRegisterUnifier from '../Types/UserRegisterUnifier';
+import { isNil } from 'lodash';
 
 export default class UserRepository implements UserRepositoryInterface {
 
@@ -29,6 +30,9 @@ export default class UserRepository implements UserRepositoryInterface {
         const result = await this.dbClient.table('user')
             .select(sqlSelect)
             .where('email', email);
+
+        if(isNil(result[0]))
+            throw new Error('Not found by Email');
 
         return result[0];
     }
