@@ -20,16 +20,16 @@ export default class SearchFilter extends BaseSchema {
      */
     public async run(): Promise<void> {
         // Prepare data to seed
-        const data: any = [];
+        // const data: any = [];
 
-        // Generate 100 rows
-        for (let row = 0; row < 10; row++) {
-            data.push({
-                name: 'data' + row,
-            });
-        }
+        // // Generate 100 rows
+        // for (let row = 0; row < 10; row++) {
+        //     data.push({
+        //         name: 'data' + row,
+        //     });
+        // }
 
-        // Insert to table
-        await this.dbConnection.table(this.tableName).insert(data);
+        // // Insert to table
+        // await this.dbConnection.table(this.tableName).insert(data);
     }
 }

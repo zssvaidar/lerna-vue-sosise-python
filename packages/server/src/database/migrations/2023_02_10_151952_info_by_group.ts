@@ -3,7 +3,7 @@ import BaseSchema from 'sosise-core/build/Database/BaseSchema';
 /**
  * If you need more information, see: http://knexjs.org/#Schema
  */
-export default class InfoByGroup extends BaseSchema {
+export default class Info extends BaseSchema {
 
     protected tableName = 'info_by_group';
 
@@ -19,7 +19,7 @@ export default class InfoByGroup extends BaseSchema {
             table.integer('filter_id').unsigned().notNullable();
             table.foreign('filter_id').references('search_filter.id');
 
-            table.json('info_content');
+            table.string('value');
             table.timestamps(true);
         });
     }

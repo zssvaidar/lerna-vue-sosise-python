@@ -5,25 +5,44 @@
         <h1>Главная</h1>
         <span class="p-input-icon-left">
             <i class="pi pi-search" />
-            <InputText type="text"  @keyup="searchTimeOut" placeholder="name, university, speciality" />
+            <InputText v-model="inputText" type="text"  @keyup="searchTimeOut" placeholder="name, university, speciality" />
         </span>
-        {{ getFilters }}
-        {{ getfilterGroup }}
+
+        <div v-for="filter in getFilters" :key="filter">
+          <!-- {{ getfilterValues[filter['filterId']] }} -->
+          <Dropdown :options="getfilterValues[filter['filterId']]" v-model="selectedValue" v-on:change="fetchInfoBy(filter['filterId'], selectedValue['value'])" optionLabel="value" :placeholder="filter.name" />
+        </div>
+
+        {{ getfilterValueResult }}
       </section>
     </div>
   </div>
 </template>
 
 <script lang="ts">
-import { Options, Vue } from 'vue-class-component'
+import { Vue } from 'vue-class-component'
 export default class WelcomeView extends Vue {
   timer;
+  selectedValue = {};
+  inputText;
+  cities = [
+    { name: 'New York', code: 'NY' },
+    { name: 'Rome', code: 'RM' },
+    { name: 'London', code: 'LDN' },
+    { name: 'Istanbul', code: 'IST' },
+    { name: 'Paris', code: 'PRS' }
+  ];
+
   get getFilters () {
     return this.$store.state.Data.filters
   }
 
-  get getfilterGroup () {
-    return this.$store.state.Data.filterGroup
+  get getfilterValues () {
+    return this.$store.state.Data.filterValues
+  }
+
+  get getfilterValueResult () {
+    return this.$store.state.Data.filterValueResult
   }
 
   searchTimeOut () {
@@ -32,8 +51,16 @@ export default class WelcomeView extends Vue {
       this.timer = null
     }
     this.timer = setTimeout(() => {
-      console.log(123)
+      this.$store.dispatch('searchByText', { text: this.inputText })
     }, 800)
+  }
+
+  fetchInfoBy (fitlerId, filterValue) {
+    this.$store.dispatch('fetchInfoBy', { selected_filter_value: filterValue })
+    // this.states.loggingIn = false
+    // setTimeout(() => {
+    //   this.$router.push({ name: 'catalog' })
+    // }, 500)
   }
 
   mounted () {

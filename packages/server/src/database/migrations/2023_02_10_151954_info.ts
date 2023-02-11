@@ -3,9 +3,9 @@ import BaseSchema from 'sosise-core/build/Database/BaseSchema';
 /**
  * If you need more information, see: http://knexjs.org/#Schema
  */
-export default class SearchTag extends BaseSchema {
+export default class InfoByGroup extends BaseSchema {
 
-    protected tableName = 'search_tag';
+    protected tableName = 'info';
 
     /**
      * Run the migrations.
@@ -14,9 +14,10 @@ export default class SearchTag extends BaseSchema {
         await this.dbConnection.schema.createTable(this.tableName, (table) => {
             table.increments('id');
 
-            table.string('text');
-            table.json('info_object');
+            table.integer('ibg_id').unsigned().notNullable();
+            table.foreign('ibg_id').references('info_by_group.id');
 
+            table.json('info_content');
             table.timestamps(true);
         });
     }

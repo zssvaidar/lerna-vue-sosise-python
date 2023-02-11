@@ -15,6 +15,7 @@ import Dialog from 'primevue/dialog'
 import Menubar from 'primevue/menubar'
 import InputText from 'primevue/inputtext'
 import Password from 'primevue/password'
+import Dropdown from 'primevue/dropdown'
 
 const app = createApp(App)
 
@@ -23,5 +24,6 @@ app.component('Menubar', Menubar)
 app.component('Dialog', Dialog)
 app.component('InputText', InputText)
 app.component('Password', Password)
+app.component('Dropdown', Dropdown)
 
 app.use(PrimeVue).use(store).use(router).mount('#app')

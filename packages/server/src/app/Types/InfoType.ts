@@ -1,6 +1,8 @@
 export default interface InfoType {
-    name: string;
-    groupId: number;
+    infoId: number;
+    ibgId: number;
     filterId: number;
+    groupId: number;
+    value: string;
     infoContent: any
 }

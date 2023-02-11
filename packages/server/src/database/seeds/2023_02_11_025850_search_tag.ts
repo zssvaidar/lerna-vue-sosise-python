@@ -19,12 +19,5 @@ export default class SearchTag extends BaseSchema {
      * Run seed
      */
     public async run(): Promise<void> {
-        // Prepare data to seed
-        const data: any = [
-            
-        ];
-
-        // Insert to table
-        await this.dbConnection.table(this.tableName).insert(data);
     }
 }

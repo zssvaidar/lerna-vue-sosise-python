@@ -10,6 +10,7 @@ export default class ApiInfoUnifier {
     private params: any;
     public filterData: boolean;
     public dataOfFilter: number | null = null;
+    public selectedFilterValue: string | null = null
 
     /**
      * Constructor
@@ -32,7 +33,8 @@ export default class ApiInfoUnifier {
         // Create validator
         const validator = new Validator(this.params, {
             filter_data: ['boolean'],
-            data_of_filter: ['numeric']
+            data_of_filter: ['numeric'],
+            selected_filter_value: ['string']
         });
 
         // If it fails throw exception
@@ -49,5 +51,7 @@ export default class ApiInfoUnifier {
         if(!isNil(this.params.data_of_filter))
             this.dataOfFilter = Number(this.params.data_of_filter);
         
+        if(!isNil(this.params.selected_filter_value))
+            this.selectedFilterValue = this.params.selected_filter_value;
     }
 }

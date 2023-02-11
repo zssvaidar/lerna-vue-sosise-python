@@ -28,9 +28,16 @@ export default class InfoController {
             const data = new ApiInfoUnifier(request.query)
 
             if(data.filterData) {
-                httpResponse.data['filters'] = await this.service.getFilterData();
-                httpResponse.data['filter_group'] = await this.service.getInfoGroup();
+                httpResponse.data['filters'] = await this.service.getFilters();
+                httpResponse.data['filter_value'] = await this.service.getFilterValue();
+                // httpResponse.data['filter_with_info'] = await this.service.getFilterWithValue();
+            
             }
+
+            if(!isNull(data.selectedFilterValue)) {
+                httpResponse.data['selected_filter_value_results'] = await this.service.getInfoByFilterValue(data.selectedFilterValue);
+            }
+
             if(!isNull(data.dataOfFilter)) {
                 console.log(data.dataOfFilter);
                 httpResponse.data['filter_data'] = await this.service.getInfoByFilter(data.dataOfFilter);
@@ -59,11 +66,22 @@ export default class InfoController {
             if(isNull(searchText))
                 throw new Error("Invalid text");
             
-            const tagResult = await this.service.searchTagWithText(searchText);
-            const ids = JSON.parse(tagResult[0].infoByGroupObject).ids
+            const searchTags = await this.service.searchTagWithText(searchText);
+            
+            const ids: number[] = [];
+            for (const searchTag of searchTags) {
+                
+                const tagIds = JSON.parse(searchTag.infoObject).ids
+                for (const id of tagIds) {
+                    if (!ids.includes(id)) {
+                        ids.push(id);
+                    }
+                }
+            }
+
             const values = await this.service.getInfoByValue('ids', ids);
 
-            httpResponse.data['searchResults'] = values;
+            httpResponse.data['search_text_results'] = values;
 
             // Send response
             return response.send(httpResponse);
