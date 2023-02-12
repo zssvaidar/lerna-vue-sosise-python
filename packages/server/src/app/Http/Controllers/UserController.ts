@@ -3,8 +3,8 @@ import IOC from 'sosise-core/build/ServiceProviders/IOC';
 import HttpResponse from 'sosise-core/build/Types/HttpResponse';
 import authConfig from '../../../config/auth';
 import UserService from '../../Services/UserService';
-import UserAuthUnifier from '../../Types/UserAuthUnifier';
-import UserRegisterUnifier from '../../Types/UserRegisterUnifier';
+import UserAuthUnifier from '../../Types/User/UserAuthUnifier';
+import UserRegisterUnifier from '../../Types/User/UserRegisterUnifier';
 
 export default class UserController {
 

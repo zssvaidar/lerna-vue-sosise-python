@@ -1,5 +1,5 @@
-import UserRegisterUnifier from "../Types/UserRegisterUnifier";
-import UserType from "../Types/UserType";
+import UserRegisterUnifier from "../Types/User/UserRegisterUnifier";
+import UserType from "../Types/User/UserType";
 
 export default interface UserRepositoryInterface {
     /**

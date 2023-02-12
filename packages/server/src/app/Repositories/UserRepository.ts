@@ -1,8 +1,8 @@
 import Database from 'sosise-core/build/Database/Database';
 import UserRepositoryInterface from './UserRepositoryInterface';
 import { Knex } from 'knex';
-import UserType from '../Types/UserType';
-import UserRegisterUnifier from '../Types/UserRegisterUnifier';
+import UserType from '../Types/User/UserType';
+import UserRegisterUnifier from '../Types/User/UserRegisterUnifier';
 import { isNil } from 'lodash';
 
 export default class UserRepository implements UserRepositoryInterface {

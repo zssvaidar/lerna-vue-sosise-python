@@ -30,17 +30,11 @@ export default class InfoController {
             if(data.filterData) {
                 httpResponse.data['filters'] = await this.service.getFilters();
                 httpResponse.data['filter_value'] = await this.service.getFilterValue();
-                // httpResponse.data['filter_with_info'] = await this.service.getFilterWithValue();
             
             }
 
             if(!isNull(data.selectedFilterValue)) {
                 httpResponse.data['selected_filter_value_results'] = await this.service.getInfoByFilterValue(data.selectedFilterValue);
-            }
-
-            if(!isNull(data.dataOfFilter)) {
-                console.log(data.dataOfFilter);
-                httpResponse.data['filter_data'] = await this.service.getInfoByFilter(data.dataOfFilter);
             }
             
             // Send response

@@ -3,9 +3,9 @@ import BaseSchema from 'sosise-core/build/Database/BaseSchema';
 /**
  * If you need more information, see: http://knexjs.org/#Schema
  */
-export default class InfoByGroup extends BaseSchema {
+export default class PivotInfoIbg extends BaseSchema {
 
-    protected tableName = 'info';
+    protected tableName = 'pivot_info_ibg';
 
     /**
      * Run the migrations.
@@ -13,7 +13,13 @@ export default class InfoByGroup extends BaseSchema {
     public async up(): Promise<void> {
         await this.dbConnection.schema.createTable(this.tableName, (table) => {
             table.increments('id');
-            table.json('info_content');
+            
+            table.integer('info_id').unsigned().notNullable();
+            table.foreign('info_id').references('info.id');
+
+            table.integer('ibg_id').unsigned().notNullable();
+            table.foreign('ibg_id').references('info_by_group.id');
+
             table.timestamps(true);
         });
     }

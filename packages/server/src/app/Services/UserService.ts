@@ -1,10 +1,10 @@
 import jwt from 'jsonwebtoken';
 import crypto from 'crypto';
 import UserRepositoryInterface from '../Repositories/UserRepositoryInterface';
-import UserAuthUnifier from '../Types/UserAuthUnifier';
+import UserAuthUnifier from '../Types/User/UserAuthUnifier';
 import authConfig from '../../config/auth';
-import UserType from '../Types/UserType';
-import UserRegisterUnifier from '../Types/UserRegisterUnifier';
+import UserType from '../Types/User/UserType';
+import UserRegisterUnifier from '../Types/User/UserRegisterUnifier';
 
 export default class UserService {
 
