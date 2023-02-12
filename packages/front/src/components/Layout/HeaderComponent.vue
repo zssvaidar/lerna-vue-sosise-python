@@ -23,7 +23,7 @@ export default {
           to: '/'
         },
         {
-          label: 'Пойск',
+          label: 'Поиск',
           icon: 'pi pi-fw pi-users',
           to: '/data-search',
           command: (event) => {
