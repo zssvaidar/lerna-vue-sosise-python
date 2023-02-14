@@ -1,0 +1,41 @@
+{
+    "files.exclude": {
+        "**/node_modules/": true,
+        "**/docker/": true,
+        "**/docs/": true,
+        "**/.dock/": true,
+        "**/artisan": true,
+        "**/docker-compose.yml": true,
+        "**/package.json": true,
+        "**/package-lock.json": true,
+        "**/tsconfig.json": true,
+        "**/cron": true,
+        "**/LICENSE.md": true,
+        "**/README.md": true,
+        "**/tslint.json": true,
+        "**/.env.example": true,
+        "**/.env.testing": true,
+        "**/.dockerignore": true,
+        "**/.gitignore": true,
+        "**/build-docker-image.sh": true,
+        "**/.editorconfig": true,
+
+        "**/tests/": true,
+        "**/rewrite/": true,
+
+        "**/config/{[!sdi],?[!eao],??[!rtc]}*": true,
+        "**/config/documentation.ts": true,
+
+        "**/server/build/": true,
+
+        "**/public/": true,
+        "**/.browserslistrc": true,
+        "**/babel.config.js": true,
+        "**/.eslintrc.js": true,
+        "**/vue.config.js": true,
+
+        "**/requirements.txt": true,
+        "**/myenv/": true,
+        "**/__pycache__/": true,
+    }
+}

@@ -55,13 +55,12 @@ export default class MainService {
      * - value
      * info
      * - info_content
-     * - ibg_id
      * pivot_info_ibg
      * - ibg_id
      * - info_id
      * search_tag
      * - text
-     * - info_by_group_object
+     * - info_object
      */
     /**
      * Constructor

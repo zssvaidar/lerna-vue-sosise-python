@@ -1,0 +1,5 @@
+myenv/
+__pycache__/
+main.py
+main1.py
+/logs/**

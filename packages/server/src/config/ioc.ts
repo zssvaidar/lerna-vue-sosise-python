@@ -1,4 +1,5 @@
 import UserRepository from "../app/Repositories/UserRepository";
+import CrawlerService from "../app/Services/CrawlerService";
 import MainService from "../app/Services/MainService";
 import UserService from "../app/Services/UserService";
 
@@ -15,8 +16,7 @@ const iocConfig = {
      * How to use:
      * const logger = IOC.makeSingleton(LoggerService) as LoggerService;
      */
-    singletons: {
-    },
+    singletons: {},
 
     /**
      * Non singleton services
@@ -28,10 +28,9 @@ const iocConfig = {
      * const logger = IOC.make(LoggerService) as LoggerService;
      */
     nonSingletons: {
-        UserService: () => new UserService(
-            new UserRepository()
-        ),
-        MainService: () => new MainService()
+        UserService: () => new UserService(new UserRepository()),
+        MainService: () => new MainService(),
+        CrawlerService: () => new CrawlerService(),
         /**
          * This service is included in the core out of the box
          * If you want to override LoggerService just uncomment this code and import all necessary modules
@@ -42,7 +41,7 @@ const iocConfig = {
         //     }
         //     return new LoggerService(new LoggerJsonConsoleRepository());
         // }
-    }
+    },
 };
 
 export default iocConfig;
