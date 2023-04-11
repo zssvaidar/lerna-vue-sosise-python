@@ -1,9 +1,8 @@
-from utility import WebCrawler
+from utility import WebCrawler, ApiRequests
 crawler = WebCrawler()
 
-links = crawler.fetch_resource_links()
-crawler.prepare_resource_links(links)
+url_data = crawler.fetch_resource_urls()
+crawler.prepare_resource_links(url_data)
 
-crawler.run_crawler()
-
-print(crawler.domain_urls)
+api = ApiRequests()
+crawler.run_crawler(api)

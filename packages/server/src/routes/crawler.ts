@@ -14,4 +14,12 @@ router.get(
     }
 );
 
+router.post(
+    `/crawler/url`,
+    (request: Request, response: Response, next: NextFunction) => {
+        crawlerController.storeLinks(request, response, next);
+    }
+);
+
+
 export default router;

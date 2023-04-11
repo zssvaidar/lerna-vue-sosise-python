@@ -37,5 +37,7 @@
         "**/requirements.txt": true,
         "**/myenv/": true,
         "**/__pycache__/": true,
+
+        "**/__init__.py": true
     }
 }
