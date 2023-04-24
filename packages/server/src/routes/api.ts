@@ -4,6 +4,7 @@ import InfoController from "../app/Http/Controllers/InfoController";
 import DocumentationBasicAuthMiddleware from "../app/Http/Middlewares/DocumentationBasicAuthMiddleware";
 import authRoutes from "./auth";
 import crawlerRoutes from "./crawler";
+import parserRoutes from "./parser";
 const router = express.Router();
 
 const infoController = new InfoController();
@@ -25,6 +26,7 @@ router.get(
 const API_VERSION = "v1";
 router.use(`/api/${API_VERSION}`, authRoutes);
 router.use(`/api/${API_VERSION}`, crawlerRoutes);
+router.use(`/api/${API_VERSION}`, parserRoutes);
 
 // Documentation
 const documentaionBasicAuthMiddleware = new DocumentationBasicAuthMiddleware();

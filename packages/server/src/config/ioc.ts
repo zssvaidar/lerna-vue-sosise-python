@@ -1,5 +1,6 @@
 import UserRepository from "../app/Repositories/UserRepository";
 import CrawlerService from "../app/Services/CrawlerService";
+import InfoParserService from "../app/Services/InfoParserService";
 import MainService from "../app/Services/MainService";
 import UserService from "../app/Services/UserService";
 
@@ -31,6 +32,7 @@ const iocConfig = {
         UserService: () => new UserService(new UserRepository()),
         MainService: () => new MainService(),
         CrawlerService: () => new CrawlerService(),
+        InfoParserService: () => new InfoParserService(),
         /**
          * This service is included in the core out of the box
          * If you want to override LoggerService just uncomment this code and import all necessary modules

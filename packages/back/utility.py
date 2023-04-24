@@ -21,13 +21,24 @@ class CrawlerDomainType():
         self.url = data['url']
 
     def __str__(self):
-        return "CrawlerDomainType <%d> <%s>" % (self.id, self.url)
+        return "CrawlerDomainType id: <%d> url: <%s>" % (self.id, self.url)
 
+class ParserPageGroupUrlType():
+    def __init__(self, data):
+        self.id = data['id']
+        self.url = data['url']
+        self.domainId = data['domainId']
+        self.pageId = data['pageId']
+        self.groupUrl = data['groupUrl']
+        self.url = data['url']
+        self.pageIds = data['pageIds']
+        self.count = data['count']
 
 class ApiRequests():
     def __init__(self):
         self.crawler_domain_url: str = 'http://localhost:10000/api/v1/crawler/domainurls'
         self.crawler_url_store: str = 'http://localhost:10000/api/v1/crawler/url'
+        self.parser_url_group: str = 'http://localhost:10000/api/v1/parser/domain/%s/urlGroups'
 
     def get_parser_domain_links(self, log=False) -> list[CrawlerDomainType]:
         try:
@@ -57,6 +68,11 @@ class ApiRequests():
         if (log):
             print(response.json())
 
+    def get_parser_group_urls(self, ids: list[int]):
+        url = self.parser_url_group % (ids[0])
+        response = requests.get(url)
+        
+        return response.json()['data']
 
 class WebCrawler():
     def __init__(self):
@@ -66,9 +82,9 @@ class WebCrawler():
         data = self.api.get_parser_domain_links()
         return data
 
-    def store_resource_url_pages(self, domain_id, page_collection, api: ApiRequests):
+    def store_resource_url_pages(self, page_collection, api: ApiRequests):
         for url, page_data in page_collection.items():
-            data = {'domain_id': domain_id, 'url': url}
+            data = {'url': url}
             if ('is_404' in page_data):
                 data['type'] = '404'
 
@@ -83,8 +99,7 @@ class WebCrawler():
     def run_crawler(self, remote_api: ApiRequests):
 
         def method_save_collection(page_collection):
-            self.store_resource_url_pages(
-                url_data.id, page_collection, remote_api)
+            self.store_resource_url_pages(url_data.id, page_collection, remote_api)
 
         with sync_playwright() as p:
             browser_type = p.chromium
@@ -101,12 +116,36 @@ class WebCrawler():
                 filter.run_crawling(page)
                 # print()
 
+    def prepare_page_group_links(self, url_data=[]):
+        self.url_data: list[ParserPageGroupUrlType] = url_data
+
+    def run_crawler_parser_on_page_group(self, remote_api: ApiRequests):
+
+        def method_save_collection(page_data_collection):
+            self.store_group_tags_data(page_data_collection, remote_api)
+            
+        with sync_playwright() as p:
+            browser_type = p.chromium
+            browser = browser_type.launch(headless=False)
+            page = browser.new_page()
+
+            timeout = 60000
+            page.set_default_navigation_timeout(timeout)
+            page.set_default_timeout(timeout)
+            for url_data in self.domain_url_data:
+                filter = DomainUrlPath(url_data.id, url_data.url)
+                filter.init_data_remote(method_save_collection)
+                filter.init_cache_file('parser')
+                filter.run_crawling(page)
+                # print()
+
 
 class ConnError(Exception):
     pass
 
 
 class DomainUrlPath:
+    max_tries = 3
     def __init__(self, domain_id: int, url: str, pwd=''):
         # self.domain_url = urlparse(url).netloc
         m = hashlib.sha256()
@@ -123,9 +162,12 @@ class DomainUrlPath:
     def init_data_remote(self, method_save_collection):
         self.method_save_collection = method_save_collection
 
-    def init_cache_file(self):
+    def init_cache_file(self, type: str = ''):
 
         path = Path('./cache/%s.json' % self.domain_hash)
+        if(type is 'parser'):z
+            path = Path('./cache/%s.json' % self.domain_hash)
+
         if (not path.is_file()):
             path.touch()
             self.save_cache_state()
@@ -230,4 +272,13 @@ class DomainUrlPath:
         return False
 
     def run_crawling(self, page: Page):
-        self.filter_page_url(page)
+        tries = 1
+        while(self.max_tries != tries):
+            try:
+                self.filter_page_url(page)
+                tries = self.max_tries
+            except Exception as e:
+                logging.error(e)
+                tries += 1
+
+        
