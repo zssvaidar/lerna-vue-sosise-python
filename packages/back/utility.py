@@ -9,6 +9,7 @@ import logging  # python logging
 from pathlib import Path
 import hashlib
 import json
+import time
 
 logging.basicConfig(filename='logs/logs.txt', level=logging.INFO, format='%(asctime)s %(message)s',
                     datefmt='%m/%d/%Y %I:%M:%S %p', filemode="a")  # configure logging file
@@ -36,27 +37,29 @@ class ParserPageGroupUrlType():
 
 class ApiRequests():
     def __init__(self):
-        self.crawler_domain_url: str = 'http://localhost:10000/api/v1/crawler/domainurls'
-        self.crawler_url_store: str = 'http://localhost:10000/api/v1/crawler/url'
-        self.parser_url_group: str = 'http://localhost:10000/api/v1/parser/domain/%s/urlGroups'
+        self.crawler_domain_url: str = 'http://localhost:10000/api/v1/domainurls/%d'
+        self.crawler_url_store: str = 'http://localhost:10000/api/v1/domainurls/url'
+        
+        self.parser_create_url_group: str = 'http://localhost:10000/api/v1/parser/domain/%s/urlGroups'
+        self.parser_url_group: str = 'http://localhost:10000/api/v1/parser/domain/%s/urlGroups?split=%s'
+        self.parser_url_group_tag_store: str = 'http://localhost:10000/api/v1/parser/domain/%s/urlGroups/%s/urlGroupTags'
 
-    def get_parser_domain_links(self, log=False) -> list[CrawlerDomainType]:
+    def get_parser_domain_link(self, id: int, log=False) -> list[CrawlerDomainType]:
         try:
-            response = requests.get(self.crawler_domain_url)
+            response = requests.get(self.crawler_domain_url % (id))
         except Exception as e:
             raise ConnError('Ошибка подключения')
 
         if (log):
             print(response.json())
 
-        data: list[CrawlerDomainType] = list(
-            map(CrawlerDomainType, get(response.json(), "data", {})))
+        # data: list[CrawlerDomainType] = list(map(CrawlerDomainType, get(response.json(), "data", {})))
 
-        return data
+        return CrawlerDomainType(response.json()['data'])
 
-    def post_url(self, url_data, log=False):
+    def post_page_url(self, url_data, log=False):
         try:
-            response = requests.post(self.crawler_url_store, data=url_data)
+            response = requests.post(self.crawler_url_store, json=url_data)
 
             if (response.json()['code'] == 5001):
                 print(8 * ' ', 'duplciate entry %s' % (str(url_data)))
@@ -68,8 +71,21 @@ class ApiRequests():
         if (log):
             print(response.json())
 
-    def get_parser_group_urls(self, ids: list[int]):
-        url = self.parser_url_group % (ids[0])
+    def post_parser_url(self, domainId, groupUrlId, url_data, log=False):
+        try:
+            response = requests.post(self.parser_url_group_tag_store%(domainId, groupUrlId), json=url_data)
+        except Exception as e:
+            raise ConnError('Ошибка подключения %s' % (self.parser_url_group_tag_store))
+
+        if (log):
+            print(response.json())
+
+    def create_parser_group_urls(self, id: int, split: int):
+        url = self.parser_create_url_group % (id)
+        response = requests.post(url, json ={'id': id, 'split': split })
+        
+    def get_parser_group_urls(self, id: int, split: int):
+        url = self.parser_url_group % (id, split)
         response = requests.get(url)
         
         return response.json()['data']
@@ -78,28 +94,32 @@ class WebCrawler():
     def __init__(self):
         self.api = ApiRequests()
 
-    def fetch_resource_urls(self,):
-        data = self.api.get_parser_domain_links()
+    def fetch_domain_url(self, id):
+        data = self.api.get_parser_domain_link(id)
         return data
 
-    def store_resource_url_pages(self, page_collection, api: ApiRequests):
+    def store_resource_url_pages(self, domainId, page_collection, api: ApiRequests):
         for url, page_data in page_collection.items():
-            data = {'url': url}
+            data = {'url': url, 'domain_id': domainId}
+            print(data)
             if ('is_404' in page_data):
                 data['type'] = '404'
 
             if ('is_file' in page_data):
                 data['type'] = 'file'
 
-            api.post_url(data)
+            api.post_page_url(data)
 
-    def prepare_resource_links(self, url_data=[]):
-        self.domain_url_data: list[CrawlerDomainType] = url_data
+    def prepare_resource_links(self, url_data):
+        self.domain_url_data: CrawlerDomainType = url_data
 
-    def run_crawler(self, remote_api: ApiRequests):
+    def prepare_page_group_links(self, url_data=[]):
+        self.url_data: list[ParserPageGroupUrlType] = url_data
 
-        def method_save_collection(page_collection):
-            self.store_resource_url_pages(url_data.id, page_collection, remote_api)
+    def run_crawler(self, remote_api: ApiRequests, script):
+
+        def method_save_collection(domainId, page_collection):
+            self.store_resource_url_pages(domainId, page_collection, remote_api)
 
         with sync_playwright() as p:
             browser_type = p.chromium
@@ -109,20 +129,20 @@ class WebCrawler():
             timeout = 60000
             page.set_default_navigation_timeout(timeout)
             page.set_default_timeout(timeout)
-            for url_data in self.domain_url_data:
-                filter = DomainUrlPath(url_data.id, url_data.url)
-                filter.init_data_remote(method_save_collection)
-                filter.init_cache_file()
-                filter.run_crawling(page)
-                # print()
 
-    def prepare_page_group_links(self, url_data=[]):
-        self.url_data: list[ParserPageGroupUrlType] = url_data
+            filter = DomainUrlPath(self.domain_url_data.id, self.domain_url_data.url)
+            filter.init_crawler_remote(method_save_collection, self.domain_url_data.id)
+            filter.init_cache_file()
+            filter.run_crawling(page, script)
+
+
+    def store_group_tags_data(self, domainId, groupUrlId, parser_data, api: ApiRequests):
+        api.post_parser_url(domainId, groupUrlId, parser_data)
 
     def run_crawler_parser_on_page_group(self, remote_api: ApiRequests):
 
-        def method_save_collection(page_data_collection):
-            self.store_group_tags_data(page_data_collection, remote_api)
+        def method_save_collection(domainId, groupUrlId, parser_data):
+            self.store_group_tags_data(domainId, groupUrlId, parser_data, remote_api)
             
         with sync_playwright() as p:
             browser_type = p.chromium
@@ -132,12 +152,16 @@ class WebCrawler():
             timeout = 60000
             page.set_default_navigation_timeout(timeout)
             page.set_default_timeout(timeout)
-            for url_data in self.domain_url_data:
-                filter = DomainUrlPath(url_data.id, url_data.url)
-                filter.init_data_remote(method_save_collection)
-                filter.init_cache_file('parser')
-                filter.run_crawling(page)
-                # print()
+            
+            for url_data in self.url_data:
+                id = url_data['id']
+                url = url_data['url']
+                domainId = url_data['domainId']
+
+                filter = DomainUrlPath(domainId, url)
+                filter.init_parser_remote(method_save_collection, id, domainId)
+                filter.run_crawling(page, 2)
+                filter.save_data(True)
 
 
 class ConnError(Exception):
@@ -158,14 +182,22 @@ class DomainUrlPath:
         self.filtered_url = []
         self.filtered_page_collection = {}
         self.index = 0
+        
+        self.parser_data = [];
 
-    def init_data_remote(self, method_save_collection):
+    def init_crawler_remote(self, method_save_collection, domainId):
         self.method_save_collection = method_save_collection
+        self.domainId = domainId
+
+    def init_parser_remote(self, method_save_collection, groupUrlId, domainId):
+        self.method_save_collection = method_save_collection
+        self.groupUrlId = groupUrlId
+        self.domainId = domainId
 
     def init_cache_file(self, type: str = ''):
 
         path = Path('./cache/%s.json' % self.domain_hash)
-        if(type is 'parser'):z
+        if(type == 'parser'):
             path = Path('./cache/%s.json' % self.domain_hash)
 
         if (not path.is_file()):
@@ -178,7 +210,6 @@ class DomainUrlPath:
 
         with open('./cache/%s.json' % self.domain_hash) as json_file:
             data = json.load(json_file)
-            # print(data.filtered_url)
             self.filtered_url = json.loads(data)['filtered_url']
             self.queue = json.loads(data)['queue']
 
@@ -191,9 +222,13 @@ class DomainUrlPath:
         with open('./cache/%s.json' % self.domain_hash, 'w') as outfile:
             json.dump(json_string, outfile)
 
-    def save_data(self):
-        self.method_save_collection(self.filtered_page_collection)
-        self.filtered_page_collection = {}
+    def save_data(self, collect_tags = False):
+        if(collect_tags):
+            self.method_save_collection(self.domainId, self.groupUrlId, self.parser_data)
+            self.parser_data = []
+        else:
+            self.method_save_collection(self.domainId, self.filtered_page_collection)
+            self.filtered_page_collection = {}
 
     def filter_page_url(self, page: Page):
         self.index += 1
@@ -202,11 +237,12 @@ class DomainUrlPath:
             self.save_data()
             return
 
-        if (self.index % 50 == 0):
+        if (self.index % 5 == 0):
             self.save_data()
             self.save_cache_state()
 
         url = self.queue.pop()
+        print(url)
         self.filtered_url.append(url)
         self.filtered_page_collection[url] = {}
         logging.info('[%d] url: %s queue length: %d' %
@@ -270,15 +306,54 @@ class DomainUrlPath:
             pass
 
         return False
+    
+    ID=0
+    def go_tree_tag_depth(self, item: Locator, depth=0, parent_id = None):
+        locator = item.locator('>*')
+        try:
+            tags = locator.evaluate_all("(elements)=> elements.map(element => { return element.tagName })")
+            textContents = locator.evaluate_all("(elements)=> elements.map(element => { var textContent = ''; if(element.childNodes.length > 0) for (let node of element.childNodes)  if(node.nodeType == Node.TEXT_NODE) textContent+=node.textContent; return textContent; })")
+        except Exception as e:
+            print(e)
 
-    def run_crawling(self, page: Page):
+        if(self.ID % 200 == 0 and self.ID != 0):
+            self.save_data(True)
+
+        elements = item.locator('>*').all()
+
+        for idx, element in enumerate(elements):
+            if(not textContents[idx].isspace() and textContents[idx] != '' and tags[idx] != 'SCRIPT' and tags[idx] != 'STYLE'):
+                self.ID +=1
+                data = { 'parentId': parent_id, 'tagId': self.ID, 'depth': depth, 'tag': tags[idx], 'text': textContents[idx]}
+                self.parser_data.append(data)
+                print(parent_id, self.ID, 'depth:', depth, 'tag:', tags[idx], 'text:', textContents[idx])
+            self.go_tree_tag_depth(element, depth+1, self.ID)
+ 
+    def colelct_tag_data(self, page: Page):
+        url = self.domain_url
+        
+        page.goto(url)
+        page.wait_for_load_state()
+
+        body = page.locator('body').all()[0]
+        self.go_tree_tag_depth(body)
+        
+
+    def run_crawling(self, page: Page, script):
         tries = 1
+        
         while(self.max_tries != tries):
             try:
-                self.filter_page_url(page)
+                if(script == 1):
+                    self.filter_page_url(page)
+                elif(script == 2):
+                    self.parser_data = []
+                    self.colelct_tag_data(page)
                 tries = self.max_tries
             except Exception as e:
                 logging.error(e)
                 tries += 1
+                time.sleep(1.5)
+                
 
         

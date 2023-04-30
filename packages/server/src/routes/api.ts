@@ -10,14 +10,14 @@ const router = express.Router();
 const infoController = new InfoController();
 
 router.get(
-    `/api/data`,
+    `/api/v1/data`,
     (request: Request, response: Response, next: NextFunction) => {
         infoController.fetchFilters(request, response, next);
     }
 );
 
 router.get(
-    `/api/data/search`,
+    `/api/v1/data/search`,
     (request: Request, response: Response, next: NextFunction) => {
         infoController.searchRequest(request, response, next);
     }

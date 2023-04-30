@@ -1,10 +1,13 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300&display=swap');
+
 :root {
-    --link-fs: 1.2rem;
-    --border-color: #dee2e6;
+  --link-fs: 1.2rem;
+  --border-color: #dee2e6;
+  --label-color: #818A8C
 }
 ul, h1, h2, h3, h4, h5 {
-    padding: 0;
-    margin: 0;
+  padding: 0;
+  margin: 0;
 }
 h1 {
     font-size: 1.4rem;
@@ -15,9 +18,25 @@ h1 {
 }
 
 .form-field * {
-    display: block;
+  display: block;
 }
 .form-field small {
-    margin-top: 0.25rem;
-    margin-bottom: 0.35rem;
+  margin-top: 0.25rem;
+  margin-bottom: 0.35rem;
+}
+
+label {
+  color: var(--label-color);
+}
+
+fieldset {
+  border: 0;
+  padding: 0;
+  margin: 0;
+  min-width: 0;
+}
+  
+body * {
+  font-family: 'Roboto', sans-serif;
+  font-weight: 500;
 }

@@ -1,6 +1,6 @@
 <!-- eslint-disable @typescript-eslint/no-unused-vars -->
 <script>
-import { UserVueType } from '@/types/UserType'
+import { UserType } from '@/types/UserType'
 import logo from '@/assets/img/logo.png'
 
 export default {
@@ -9,7 +9,7 @@ export default {
       type: Boolean
     },
     user: {
-      type: UserVueType
+      type: UserType
     }
   },
   emits: ['logging-in'],
@@ -31,10 +31,10 @@ export default {
           }
         },
         {
-          label: 'Api',
+          label: 'Пойск данных',
           visible: (args) => this.getUser().isAdmin ?? false,
           icon: 'pi pi-fw pi-database',
-          to: '/api-list',
+          to: '/search-engine',
           command: (event) => {
             //
           }
@@ -85,7 +85,7 @@ export default {
             <div class="img-wrap">
               <img id="logo"  :src="logo">
             </div>
-            <div>RECOMMENDATION SYSTEM BASED<br>
+            <div id="title">RECOMMENDATION SYSTEM BASED<br>
                ON SCIENTIFIC DATA</div>
           </a>
         </template>
@@ -128,7 +128,9 @@ header .p-menubar-root-list, .p-menubar-button {
   overflow: hidden;
   margin: 0;
 }
-
+#title {
+  font-weight: 600;
+}
 #logo {
   max-width:100%;
   display: block;

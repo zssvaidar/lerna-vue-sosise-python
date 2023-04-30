@@ -4,7 +4,8 @@ import store from '@/store'
 import PageNotFound from '@/views/PageNotFound.vue'
 import WelcomeView from '@/views/WelcomeView.vue'
 import SearchView from '@/views/SearchView.vue'
-import ApiView from '@/views/Dashboard/ApiView.vue'
+import SearchEngineView from '@/views/Dashboard/SearchEngineView.vue'
+import UrlGroupComponent from '@/components/UrlGroupComponent.vue'
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -19,10 +20,21 @@ const routes: Array<RouteRecordRaw> = [
     meta: { requiresAuth: true }
   },
   {
-    path: '/api-list',
+    path: '/search-engine',
     name: '',
-    component: ApiView,
-    meta: { requiresAuth: true }
+    component: SearchEngineView,
+    meta: { requiresAuth: true },
+    children: [
+      {
+        path: 'site=:siteId/split=:split/group_id=:groupId',
+        component: UrlGroupComponent,
+        props: true,
+        name: 'group',
+        meta: {
+          showModal: true
+        }
+      }
+    ]
   },
   {
     path: '/:catchAll(.*)',
@@ -67,7 +79,5 @@ router.beforeEach((to, from, next) => {
       })
     }
   }
-
-  next()
 })
 export default router

@@ -36,7 +36,7 @@ export default {
     async authToken ({ commit }, payload) {
       const response = await axios({
         method: 'get',
-        url: `${process.env.VUE_APP_API_URL}v1/auth`,
+        url: `${process.env.VUE_APP_API_URL}/auth`,
         withCredentials: true,
         data: payload
       }).catch(error => {
@@ -49,10 +49,10 @@ export default {
     },
     async authorizeUser ({ commit }, payload) {
       console.log(payload)
-      console.log(`${process.env.VUE_APP_API_URL}v1/user/auth`)
+      console.log(`${process.env.VUE_APP_API_URL}/user/auth`)
       const response = await axios({
         method: 'post',
-        url: `${process.env.VUE_APP_API_URL}v1/user/auth`,
+        url: `${process.env.VUE_APP_API_URL}/user/auth`,
         withCredentials: true,
         data: payload
       })
@@ -61,7 +61,7 @@ export default {
     async registerUser ({ commit }, payload) {
       const response = await axios({
         method: 'post',
-        url: `${process.env.VUE_APP_API_URL}v1/user/`,
+        url: `${process.env.VUE_APP_API_URL}/user/`,
         data: payload,
         withCredentials: true
       })
@@ -77,7 +77,7 @@ export default {
     async fetchUsers ({ commit }) {
       const response = await axios({
         method: 'get',
-        url: `${process.env.VUE_APP_API_URL}v1/user`,
+        url: `${process.env.VUE_APP_API_URL}/user`,
         withCredentials: true
       })
       commit('fetchUsers', response.data)
@@ -85,14 +85,14 @@ export default {
     async deleteUser ({ commit }, payload) {
       const response = await axios({
         method: 'delete',
-        url: `${process.env.VUE_APP_API_URL}v1/user/${payload}`,
+        url: `${process.env.VUE_APP_API_URL}/user/${payload}`,
         withCredentials: true
       })
     },
     async toggleUserActive ({ commit }, payload) {
       const response = await axios({
         method: 'put',
-        url: `${process.env.VUE_APP_API_URL}v1/user/${payload}/active`,
+        url: `${process.env.VUE_APP_API_URL}/user/${payload}/active`,
         withCredentials: true
       })
     }

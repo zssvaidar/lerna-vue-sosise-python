@@ -17,10 +17,9 @@ export default class CrawlerPageUrl extends BaseSchema {
             table.integer("domain_id").unsigned().notNullable();
             table.foreign("domain_id").references("domain_url.id");
 
-            table.string('url', 1000).notNullable().unique();
+            table.specificType('url', 'VARCHAR(1000)');
             table.string('type');
-            table.integer("group_id").unsigned().notNullable().unique();
-            table.foreign("group_id").references("parser_page_url_group.id");
+            table.integer("group_id").unsigned().nullable();
 
             table.timestamps(true);
         });

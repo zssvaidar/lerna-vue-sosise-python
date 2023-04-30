@@ -23,10 +23,24 @@ router.get(
     }
 );
 
+router.post(
+    `/parser/domain/:id/urlGroups`,
+    (request: Request, response: Response, next: NextFunction) => {
+        infoParserController.createDomainUrlGroups(request, response, next);
+    }
+);
+
 router.get(
     `/parser/domain/:id/urlGroups`,
     (request: Request, response: Response, next: NextFunction) => {
         infoParserController.serveDomainUrlGroups(request, response, next);
+    }
+);
+
+router.post(
+    `/parser/domain/:id/urlGroups/:groupId/urlGroupTags`,
+    (request: Request, response: Response, next: NextFunction) => {
+        infoParserController.saveDomainUrlGroupTags(request, response, next);
     }
 );
 

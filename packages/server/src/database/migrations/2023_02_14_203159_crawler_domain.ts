@@ -13,6 +13,7 @@ export default class CrawlerDomain extends BaseSchema {
         await this.dbConnection.schema.createTable(this.tableName, (table) => {
             table.increments("id");
 
+            table.string("name");
             table.string("url");
 
             table.timestamps(true);

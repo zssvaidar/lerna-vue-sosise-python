@@ -18,6 +18,11 @@ import Password from 'primevue/password'
 import Dropdown from 'primevue/dropdown'
 import Card from 'primevue/card'
 import Tooltip from 'primevue/tooltip'
+import VirtualScroller from 'primevue/virtualscroller'
+import ScrollPanel from 'primevue/scrollpanel'
+import Accordion from 'primevue/accordion'
+import AccordionTab from 'primevue/accordiontab'
+import FileUpload from 'primevue/fileupload'
 
 const app = createApp(App)
 
@@ -28,6 +33,12 @@ app.component('InputText', InputText)
 app.component('Password', Password)
 app.component('Dropdown', Dropdown)
 app.component('Card', Card)
+app.component('VirtualScroller', VirtualScroller)
+app.component('ScrollPanel', ScrollPanel)
+app.component('Accordion', Accordion)
+app.component('AccordionTab', AccordionTab)
+app.component('FileUpload', FileUpload)
+
 app.directive('tooltip', Tooltip)
 
 app.use(PrimeVue).use(store).use(router).mount('#app')

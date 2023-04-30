@@ -35,7 +35,7 @@ const theModule: Module <MyState, MyState> = {
       const params = new URLSearchParams(data).toString()
       const response = await axios({
         method: 'get',
-        url: `${process.env.VUE_APP_API_URL}data?${params}`,
+        url: `${process.env.VUE_APP_API_URL}/data?${params}`,
         withCredentials: true
       })
       await commit('fetchData', response.data.data)
@@ -44,7 +44,7 @@ const theModule: Module <MyState, MyState> = {
       const params = new URLSearchParams(data).toString()
       const response = await axios({
         method: 'get',
-        url: `${process.env.VUE_APP_API_URL}data?${params}`,
+        url: `${process.env.VUE_APP_API_URL}/data?${params}`,
         withCredentials: true
       })
       await commit('fetchInfoBy', response.data.data)
@@ -53,7 +53,7 @@ const theModule: Module <MyState, MyState> = {
       const params = new URLSearchParams(data).toString()
       const response = await axios({
         method: 'get',
-        url: `${process.env.VUE_APP_API_URL}data/search?${params}`,
+        url: `${process.env.VUE_APP_API_URL}/data/search?${params}`,
         withCredentials: true
       })
       await commit('searchByText', response.data.data)

@@ -2,13 +2,13 @@ import { FilterType, FilterValueType } from '@/types/Filters'
 import { createStore } from 'vuex'
 import AuthUser from './modules/AuthUser'
 import Data from './modules/Data'
+import SearchConfig from './modules/SearchConfig'
 
 export interface MyState {
   filters: FilterType[];
   filterValues: {
     [id: string]: FilterType[] };
   filterValueResult: any[]
-
 }
 
 const rootState: MyState = {
@@ -27,6 +27,7 @@ export default createStore({
   },
   modules: {
     AuthUser,
-    Data
+    Data: Data,
+    searchconfig: SearchConfig
   }
 })
