@@ -36,88 +36,88 @@ export default class SearchFilterAndGroup extends BaseSchema {
 
         const data1: any = [
             {
-                domain: 'http://www.vestnik.nauka.kz/', 
-                url: 'some_data', 
+                domain: 'http://www.vestnik.nauka.kz/',
+                url: 'some_data',
                 type: 'some_data'
             },
                 {
                     domain: 'https://journal.iitu.edu.kz/',
-                    url: 'https://journal.iitu.edu.kz/index.php/ijict/article/view/284', 
+                    url: 'https://journal.iitu.edu.kz/index.php/ijict/article/view/284',
                     type: 'some_data'
                 }, // Акнур Ембердиева
                 {
                     domain: 'https://journal.iitu.edu.kz/',
-                    url: 'https://journal.iitu.edu.kz/index.php/ijict/article/view/285', 
+                    url: 'https://journal.iitu.edu.kz/index.php/ijict/article/view/285',
                     type: 'some_data'
                 }, // Динара Жолжанова, Рысхан Сатыбалдиева
                 {
                     domain: 'https://journal.iitu.edu.kz/',
-                    url: 'https://journal.iitu.edu.kz/index.php/ijict/article/view/286', 
+                    url: 'https://journal.iitu.edu.kz/index.php/ijict/article/view/286',
                     type: 'some_data'
                 }, // Куралай Иманалиева, Леонид Ким, Лаура Алимжанова
                 {
                     domain: 'https://journal.iitu.edu.kz/',
-                    url: 'https://journal.iitu.edu.kz/index.php/ijict/article/view/287', 
+                    url: 'https://journal.iitu.edu.kz/index.php/ijict/article/view/287',
                     type: 'some_data'
                 }, // Райхан Мурат, Галина Пащенко
                 {
                     domain: 'https://journal.iitu.edu.kz/',
-                    url: 'https://journal.iitu.edu.kz/index.php/ijict/article/view/288', 
+                    url: 'https://journal.iitu.edu.kz/index.php/ijict/article/view/288',
                     type: 'some_data'
                 }, // Анель Мухамеджанова, Галина Пащенко
                 {
                     domain: 'https://journal.iitu.edu.kz/',
-                    url: 'https://journal.iitu.edu.kz/index.php/ijict/article/view/289', 
+                    url: 'https://journal.iitu.edu.kz/index.php/ijict/article/view/289',
                     type: 'some_data'
                 }, // С.Б. Рахметулаева, А.К. Кульбаева
                     {
-                        domain: 'https://sj.astanait.edu.kz/', 
-                        url: 'http://journal.astanait.edu.kz/index.php/ojs/article/view/67', 
+                        domain: 'https://sj.astanait.edu.kz/',
+                        url: 'http://journal.astanait.edu.kz/index.php/ojs/article/view/67',
                         type: 'some_data'
                     },
                     {
-                        domain: 'https://sj.astanait.edu.kz/', 
-                        url: 'http://journal.astanait.edu.kz/index.php/ojs/article/view/51', 
+                        domain: 'https://sj.astanait.edu.kz/',
+                        url: 'http://journal.astanait.edu.kz/index.php/ojs/article/view/51',
                         type: 'some_data'
                     },
                     {
-                        domain: 'https://sj.astanait.edu.kz/', 
-                        url: 'http://journal.astanait.edu.kz/index.php/ojs/article/view/52', 
+                        domain: 'https://sj.astanait.edu.kz/',
+                        url: 'http://journal.astanait.edu.kz/index.php/ojs/article/view/52',
                         type: 'some_data'
                     },
                     {
-                        domain: 'https://sj.astanait.edu.kz/', 
-                        url: 'http://journal.astanait.edu.kz/index.php/ojs/article/view/57', 
+                        domain: 'https://sj.astanait.edu.kz/',
+                        url: 'http://journal.astanait.edu.kz/index.php/ojs/article/view/57',
                         type: 'some_data'
                     },
                     {
-                        domain: 'https://sj.astanait.edu.kz/', 
-                        url: 'http://journal.astanait.edu.kz/index.php/ojs/article/view/62', 
+                        domain: 'https://sj.astanait.edu.kz/',
+                        url: 'http://journal.astanait.edu.kz/index.php/ojs/article/view/62',
                         type: 'some_data'
                     },
                     {
-                        domain: 'https://sj.astanait.edu.kz/', 
-                        url: 'http://journal.astanait.edu.kz/index.php/ojs/article/view/68', 
+                        domain: 'https://sj.astanait.edu.kz/',
+                        url: 'http://journal.astanait.edu.kz/index.php/ojs/article/view/68',
                         type: 'some_data'
                     },
             {
-                domain: 'https://bb.kaznu.kz/', 
-                url: 'some_data', 
+                domain: 'https://bb.kaznu.kz/',
+                url: 'some_data',
                 type: 'some_data'
             },
             {
-                domain: 'https://vestnik.aues.kz/', 
-                url: 'some_data', 
+                domain: 'https://vestnik.aues.kz/',
+                url: 'some_data',
                 type: 'some_data'
             },
             {
-                domain: 'https://bulbio.enu.kz/ ', 
-                url: 'some_data', 
+                domain: 'https://bulbio.enu.kz/ ',
+                url: 'some_data',
                 type: 'some_data'
             },
             {
-                domain: 'https://vestnik.kbtu.edu.kz/', 
-                url: 'some_data',  
+                domain: 'https://vestnik.kbtu.edu.kz/',
+                url: 'some_data',
                 type: 'some_data'
             },
         ];
@@ -403,7 +403,7 @@ export default class SearchFilterAndGroup extends BaseSchema {
         ];
 
         for (let index = 0; index < data2.length; index++) {
-            
+
             const item = data2[index];
 
             const info = await this.dbConnection.table('info').insert({
@@ -414,55 +414,55 @@ export default class SearchFilterAndGroup extends BaseSchema {
             });
             item.infoId = info[0];
 
-            let copy = Object.assign({}, item);
-            delete copy['data']
+            const copy = Object.assign({}, item);
+            delete copy['data'];
             const filters = copy.filters;
             for (let idy = 0; idy < filters.length; idy++) {
                 const filter = filters[idy];
                 const ibg = await this.dbConnection.table('info_by_group').insert(
                     filter
                 );
-                const ibgId = ibg[0]
+                const ibgId = ibg[0];
                 Helper.sleep(400);
 
                 const pivot = await this.dbConnection.table('pivot_info_ibg').insert({
                     info_id: info[0],
                     ibg_id: ibgId
-                })
+                });
             }
-        }            
+        }
         // Insert to table
 
         const data3: { text?: number[] } = {};
         data2.forEach(item => {
-            
+
             item.data?.authors.forEach(element => {
                 if(!Array.isArray(data3[element]))
-                    data3[element] = []
-                data3[element].push( item.infoId )
+                    data3[element] = [];
+                data3[element].push( item.infoId );
             });
             item.data?.keywords.forEach(element => {
                 if(!Array.isArray(data3[element]))
-                    data3[element] = []
-                data3[element].push( item.infoId )
-            })
+                    data3[element] = [];
+                data3[element].push( item.infoId );
+            });
             item.data?.meta.forEach((meta) => {
 
                 for (const [key, value] of Object.entries(meta)) {
 
                     if(!Array.isArray(data3[value]))
-                        data3[value] = []
+                        data3[value] = [];
 
-                    data3[value].push( item.infoId )
+                    data3[value].push( item.infoId );
                 }
-        
-            })
+
+            });
 
         });
-        
+
         for (const [text, ids] of Object.entries(data3)) {
 
-            const search_tag = await this.dbConnection.table('search_tag').insert({
+            await this.dbConnection.table('search_tag').insert({
                 text,
                 info_object: JSON.stringify({ ids })
             });

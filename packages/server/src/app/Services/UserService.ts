@@ -35,7 +35,7 @@ export default class UserService {
      */
     public async authenticateUser(userUnifier: UserAuthUnifier): Promise<{ user: UserType; token: string; }> {
         const user = await this.localStorageRepository.getUserByEmail(userUnifier.email, true);
-        
+
         if( this.hashPassword(userUnifier.password) === user.password) {
             const token = this.generateJwtwebToken(userUnifier, authConfig.tokenSecret, { expiresIn: authConfig.tokenExpire });
             user.password = undefined;

@@ -9,7 +9,7 @@ export default class ApiInfoUnifier {
 
     private params: any;
     public filterData: boolean;
-    public selectedFilterValue: string | null = null
+    public selectedFilterValue: string | null = null;
 
     /**
      * Constructor

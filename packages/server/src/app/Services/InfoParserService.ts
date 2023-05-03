@@ -5,7 +5,7 @@ import serviceConfig from "../../config/serviceConfig";
 import DomainUrlType from "../Types/Parser/DomainUrlType";
 import PageGroupUrl from "../Types/Parser/PageGroupUrl";
 import PageUrlType from "../Types/Parser/PageUrlType";
-import ParserUrlGroupTagInfoType from "../Types/ParserUrlGroupTagInfoType";
+import ParserUrlGroupTagInfoType from "../Types/UrlGroupTagType";
 import AbstractParser from "./AbstractParser";
 
 export default class InfoParserService extends AbstractParser{
@@ -21,19 +21,19 @@ export default class InfoParserService extends AbstractParser{
     public async getDomains(): Promise<DomainUrlType[]> {
         const table = "domain_url";
         const rows  = await this.client.table(table).select(['id','url', 'created_at as createdAt']);
-        
+
         return rows;
     }
 
     public async getPageUrls(domainId: number): Promise<PageUrlType[]> {
         const table = "page_url";
         const rows = await this.client.table(table).select(['id', 'domain_id as domainId', 'url', 'type', 'created_at as createdAt']).where('domain_id', domainId);
-        return rows;    
+        return rows;
     }
 
     public async findPageGroupUrls(domainId: number, split: number): Promise<PageGroupUrl[]> {
         const raw = await this.client.raw(`
-            select min(domain_id) domainId, min(id) pageId, subq.groupUrl, ${split} split, min(url) url, subq.ids pageIds, min(subq.c) count 
+            select min(domain_id) domainId, min(id) pageId, subq.groupUrl, ${split} split, min(url) url, subq.ids pageIds, min(subq.c) count
             from (
                 select group_concat(';', id, ';') search_ids, JSON_ARRAYAGG(id) ids, SUBSTRING_INDEX(url, '/', ${split}) groupUrl, count(*) c
                 from page_url
@@ -41,7 +41,7 @@ export default class InfoParserService extends AbstractParser{
                 group by groupUrl
             ) subq
             join page_url
-            where subq.c > 1 
+            where subq.c > 1
             and domain_id = ${domainId}
             and search_ids LIKE CONCAT('%;', id, ';%')
             group by subq.groupUrl;
@@ -52,9 +52,9 @@ export default class InfoParserService extends AbstractParser{
             row.pageIds = JSON.parse(row.pageIds);
         });
 
-        return rows;    
+        return rows;
     }
-    
+
     public async savePageGroupUrls(domainId: number, groupUrls: PageGroupUrl[]): Promise<void> {
         const table = 'parser_url_group';
 
@@ -70,7 +70,7 @@ export default class InfoParserService extends AbstractParser{
             });
         }
 
-        // await this.client.table(table).insert(data);       
+        // await this.client.table(table).insert(data);
     }
 
     public async getPageGroupUrls(domainId: number, split: number | null = null): Promise<PageGroupUrl[]> {
@@ -86,7 +86,7 @@ export default class InfoParserService extends AbstractParser{
             });
 
         for (const row of rows) {
-            row.pageIds = JSON.parse(row.pageIds)
+            row.pageIds = JSON.parse(row.pageIds);
         }
 
         return rows;
@@ -98,7 +98,7 @@ export default class InfoParserService extends AbstractParser{
         for (const pageGroupUrl of pageGroupUrls) {
             await this.client.table(table)
                 .update('group_id', pageGroupUrl.id)
-                .whereIn('id', pageGroupUrl.pageIds)
+                .whereIn('id', pageGroupUrl.pageIds);
         }
 
     }
@@ -112,16 +112,17 @@ export default class InfoParserService extends AbstractParser{
                 depth: tagInfo.depth,
                 tag: tagInfo.tag,
                 text: tagInfo.text,
+                xpath: tagInfo.xpath
             };
         });
 
         const table = 'parser_group_url_tag_info';
         await this.client.table(table).insert(data)
-        .onConflict('text')
+        .onConflict(['text', 'xpath'])
         .ignore();
     }
-    
-    public async runPageGroupHtmlCollector(domainIds: number[]): Promise<any>{ 
-        return await this.runSubProcess1(domainIds)
+
+    public async runPageGroupHtmlCollector(domainIds: number[]): Promise<any> {
+        return await this.runSubProcess1(domainIds);
     }
 }

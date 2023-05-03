@@ -25,7 +25,7 @@ export default defineComponent({
 
 <template>
   <div>
-    group component
+    domain component
     {{ domainData }}
     {{ domainUrlGroupData }}
   </div>

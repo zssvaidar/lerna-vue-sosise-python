@@ -10,7 +10,7 @@ export default class CrawlerController {
     private serverScriptService: ServerScriptService;
     constructor() {
         this.service = IOC.make(CrawlerService);
-        this.serverScriptService = IOC.make(ServerScriptService)
+        this.serverScriptService = IOC.make(ServerScriptService);
     }
 
     public async createDomainUrl(
@@ -26,7 +26,7 @@ export default class CrawlerController {
                 data: {},
             };
 
-            const domainUrl = request.body.domain_url
+            const domainUrl = request.body.domain_url;
             await this.service.createDomainUrl(domainUrl);
 
             // Send response
@@ -49,7 +49,7 @@ export default class CrawlerController {
                 data: {},
             };
 
-            const id = request.body.id
+            const id = request.body.id;
             await this.service.removeDomainUrl(id);
 
             // Send response
@@ -120,8 +120,8 @@ export default class CrawlerController {
 
             const domainUrls = await this.service.getDomainUrls();
 
-            httpResponse['list'] = domainUrls
-            httpResponse['length'] = domainUrls.length
+            httpResponse['list'] = domainUrls;
+            httpResponse['length'] = domainUrls.length;
 
             // Send response
             return response.send(httpResponse);
@@ -129,7 +129,7 @@ export default class CrawlerController {
             next(error);
         }
     }
-    
+
     public async runscriptCrawler(
         request: Request,
         response: Response,
@@ -144,7 +144,7 @@ export default class CrawlerController {
                 data: {},
             };
 
-            const id = request.query.id
+            const id = request.query.id;
 
             if(request.query.script === 'group_tags') {
                 httpResponse.data = await this.serverScriptService.runParserForGroupUrlTags(id);
@@ -174,19 +174,20 @@ export default class CrawlerController {
     ) {
         try {
             console.log(request);
-            const data_ = new PostCrawlerPageUrl(request.body);
-            const data = await this.service.storeDomainPageUrl(
-                data_.domainId,
-                data_.url,
-                data_.type
-            );
+            const params = new PostCrawlerPageUrl(request.body);
 
             // Prepare http response
             const httpResponse: HttpResponse = {
                 code: 1000,
                 message: "storeLinks success",
-                data: data,
+                data: {},
             };
+
+            httpResponse.data = await this.service.storeDomainPageUrl(
+                params.domainId,
+                params.url,
+                params.type
+            );
 
             // Send response
             return response.send(httpResponse);

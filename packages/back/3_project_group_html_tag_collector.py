@@ -19,7 +19,7 @@ for split in splits:
     if(len(data_parser_group_urls['list']) > 0):
         logging.info(data_parser_group_urls['list'][0]['url'])
 
-    logging.info(('%s %s %s %s')%(data_parser_group_urls['length'], 'groups in split of', split, '/'))
+    logging.info(('%s %s %s  %s')%(data_parser_group_urls['length'], 'groups in split of', split, '/'))
 
     crawler.prepare_page_group_links(data_parser_group_urls['list'])
     crawler.run_crawler_parser_on_page_group(api)

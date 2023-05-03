@@ -86,7 +86,6 @@ export default {
       state.domainMap = listToMapByValue2(state.domains, 'id')
     },
     fetchUrlGroupData (state, payload) {
-      console.log(payload)
       const domainMapUrlGroups = listToMapByValue3(payload.list, 'domainId', 'split')
       state.domainMapUrlGroups = domainMapUrlGroups
       state.domainMapUrlGroupCount = payload.list.length
@@ -159,6 +158,5 @@ export default {
         withCredentials: true
       })
     }
-
   }
 }

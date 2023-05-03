@@ -4,6 +4,7 @@ from playwright.sync_api import Page, Locator, expect
 from playwright.sync_api import sync_playwright
 from playwright_dompath.dompath_sync import xpath_path
 
+
 from urllib.parse import urlparse
 import logging  # python logging
 from pathlib import Path
@@ -308,7 +309,7 @@ class DomainUrlPath:
         return False
     
     ID=0
-    def go_tree_tag_depth(self, item: Locator, depth=0, parent_id = None):
+    def go_tree_tag_depth(self, page: Page, item: Locator, depth=0, parent_id = None):
         locator = item.locator('>*')
         try:
             tags = locator.evaluate_all("(elements)=> elements.map(element => { return element.tagName })")
@@ -324,19 +325,31 @@ class DomainUrlPath:
         for idx, element in enumerate(elements):
             if(not textContents[idx].isspace() and textContents[idx] != '' and tags[idx] != 'SCRIPT' and tags[idx] != 'STYLE'):
                 self.ID +=1
-                data = { 'parentId': parent_id, 'tagId': self.ID, 'depth': depth, 'tag': tags[idx], 'text': textContents[idx]}
+                xpath = xpath_path(element, False).replace('"','\'')
+                # print(xpath)  
+                logging.info(('%s')%(xpath))
+                # try:
+                #     href = page.locator('xpath=%s'%(xpath)).inner_html()
+                #     # href = page.evaluate('() => $x("%s")'%(xpath))
+                #     print(href)
+                # except Exception as e:
+                #     print(e)
+                data = { 'parentId': parent_id, 'tagId': self.ID, 'depth': depth, 'tag': tags[idx], 'text': textContents[idx], 'xpath': xpath}
+                # print(data)
                 self.parser_data.append(data)
-                print(parent_id, self.ID, 'depth:', depth, 'tag:', tags[idx], 'text:', textContents[idx])
-            self.go_tree_tag_depth(element, depth+1, self.ID)
+                # print(parent_id, self.ID, 'depth:', depth, 'tag:', tags[idx], 'text:', textContents[idx])
+            self.go_tree_tag_depth(page, element, depth+1, self.ID)
  
     def colelct_tag_data(self, page: Page):
         url = self.domain_url
         
+        print(url)
+        logging.info(('%s')%(url))
         page.goto(url)
         page.wait_for_load_state()
 
         body = page.locator('body').all()[0]
-        self.go_tree_tag_depth(body)
+        self.go_tree_tag_depth(page, body)
         
 
     def run_crawling(self, page: Page, script):

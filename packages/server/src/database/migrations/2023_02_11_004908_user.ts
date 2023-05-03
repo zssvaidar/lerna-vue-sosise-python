@@ -13,7 +13,7 @@ export default class User extends BaseSchema {
     public async up(): Promise<void> {
         await this.dbConnection.schema.createTable(this.tableName, (table) => {
             table.increments('id');
-            
+
             table.string('username').notNullable();
             table.string('email').notNullable().unique();
             table.string('password');

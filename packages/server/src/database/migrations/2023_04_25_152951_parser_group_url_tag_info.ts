@@ -12,15 +12,16 @@ export default class ParserGroupTagInfo extends BaseSchema {
      */
     public async up(): Promise<void> {
         await this.dbConnection.schema.createTable(this.tableName, (table) => {
-            table.increments('id')
+            table.increments('id');
 
-            table.integer('tag_id')
+            table.integer('tag_id');
             table.integer('parent_id');
             table.integer("url_group_id").unsigned().notNullable();
             table.foreign("url_group_id").references("parser_url_group.id");
             table.integer('depth');
             table.string('tag');
             table.string('text', 1024);
+            table.string('xpath');
 
             table.timestamps(true, true);
         });

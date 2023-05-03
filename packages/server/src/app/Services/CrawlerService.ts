@@ -16,7 +16,7 @@ export default class CrawlerService {
 
     public async createDomainUrl(domainUrl: string): Promise<void> {
         const table = "domain_url";
-        const name = domainUrl.split('/')[2]??''
+        const name = domainUrl.split('/')[2] ?? '';
         await this.client.table(table)
             .insert({name, url: domainUrl});
     }

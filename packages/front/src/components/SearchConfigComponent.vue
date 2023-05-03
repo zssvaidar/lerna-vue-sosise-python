@@ -158,6 +158,7 @@ export default defineComponent({
                 <ScrollPanel v-if="domains.length" style="width: 100%; height: 40vh" class="custombar1">
                   <template v-for="(domain) in domains" :key="domain.id">
                     <div class="row" @click="selectSite(domain.id)">
+                        <div class="domain-link">  <router-link :to="{ name: 'domainPage', params: { domainId: domain.id }}" > link </router-link>  </div>
                         <div class="row-info">
                           <div>
                             <label for="">Ид:</label>
@@ -401,6 +402,9 @@ export default defineComponent({
           &:hover {
             background-color: #eeefff;
             color: #000;
+          }
+          .domain-link {
+            margin-left: auto;
           }
         }
         .row .row-action {

@@ -56,7 +56,7 @@
 </template>
 
 <script lang="ts">
-import { PropType } from 'vue';
+import { PropType } from 'vue'
 import { Options, Vue } from 'vue-class-component'
 import UserType from '../../types/UserType'
 

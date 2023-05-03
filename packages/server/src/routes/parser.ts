@@ -2,11 +2,13 @@ import express from "express";
 import { Request, Response, NextFunction } from "express";
 import CrawlerController from "../app/Http/Controllers/CrawlerController";
 import InfoParserController from "../app/Http/Controllers/InfoParserController";
+import SiteInfoController from "../app/Http/Controllers/SiteInfoController";
 
 const router = express.Router();
 
 // IndexController
 const infoParserController = new InfoParserController();
+const siteInfoController = new SiteInfoController();
 
 
 router.get(
@@ -48,6 +50,22 @@ router.get(
     `/parser/domain/:id/urlGroupHtmlContent/collect`,
     (request: Request, response: Response, next: NextFunction) => {
         infoParserController.starCollectUrlGroupHtmlContent(request, response, next);
+    }
+);
+
+
+router.get(
+    `/parser/domain/:id`,
+    (request: Request, response: Response, next: NextFunction) => {
+        siteInfoController.serveDomainData(request, response, next);
+    }
+);
+
+
+router.get(
+    `/parser/domain/:id/group/:group_id`,
+    (request: Request, response: Response, next: NextFunction) => {
+        siteInfoController.serveDomainUrlGroupData(request, response, next);
     }
 );
 

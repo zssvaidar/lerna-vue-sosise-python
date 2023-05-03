@@ -40,7 +40,7 @@ router.get(
     (request: Request, response: Response, next: NextFunction) => {
         crawlerController.runscriptCrawler(request, response, next);
     }
-)
+);
 
 router.post(
     `/domainurls/url`,

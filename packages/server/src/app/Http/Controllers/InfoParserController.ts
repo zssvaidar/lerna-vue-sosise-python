@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import IOC from "sosise-core/build/ServiceProviders/IOC";
 import HttpResponse from "sosise-core/build/Types/HttpResponse";
 import InfoParserService from "../../Services/InfoParserService";
-import ParserUrlGroupTagInfoType from "../../Types/ParserUrlGroupTagInfoType";
+import ParserUrlGroupTagInfoType from "../../Types/UrlGroupTagType";
 
 export default class InfoParserController {
     private service: InfoParserService;
@@ -154,7 +154,7 @@ export default class InfoParserController {
     }
 
     /**
-     * 
+     *
      */
     public async starCollectUrlGroupHtmlContent(
         request: Request,
@@ -168,7 +168,7 @@ export default class InfoParserController {
                 message: "startDataCollection success",
                 data: null,
             };
-            
+
             let ids: any = request.query.ids;
             ids = ids.split(',').map(id => Number(id));
 

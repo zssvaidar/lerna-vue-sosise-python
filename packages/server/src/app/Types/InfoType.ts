@@ -4,5 +4,5 @@ export default interface InfoType {
     filterId: number;
     groupId: number;
     value: string;
-    infoContent: any
+    infoContent: any;
 }

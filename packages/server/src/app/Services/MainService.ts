@@ -1,6 +1,6 @@
 import { Knex } from "knex";
 import Database from "sosise-core/build/Database/Database";
-import serviceConfig from "../../config/serviceConfig"
+import serviceConfig from "../../config/serviceConfig";
 import FilterType from "../Types/Filter/FilterType";
 import FilterValueType from "../Types/Filter/FilterValueType";
 import InfoType from "../Types/InfoType";
@@ -10,7 +10,7 @@ import { isEmpty } from 'lodash';
 export default class MainService {
     private client: Knex;
 
-    /* 
+    /*
      * v1
      * search_filter
      * - name
@@ -114,8 +114,8 @@ export default class MainService {
             .select(select)
             .where('text', 'like', `%${text}%`);
 
-        if (isEmpty(result)) 
-            return []
+        if (isEmpty(result))
+            return [];
 
         return result;
     }
@@ -145,7 +145,7 @@ export default class MainService {
             value: data.value,
             groupId: data.groupId,
             infoContent: JSON.parse(data.infoContent)
-        }
+        };
     }
 
 }
