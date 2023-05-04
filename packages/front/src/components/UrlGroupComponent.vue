@@ -1,34 +1,29 @@
 <script lang="ts">
 
-import { defineComponent, PropType } from 'vue'
+import { defineComponent } from 'vue'
 
 export default defineComponent({
   props: {
-    domainData: {
-      type: Array as PropType<any>,
-      required: true
-    },
-    domainUrlGroupData: {
-      type: Array as PropType<any[]>,
-      required: true
-    }
+    show: Boolean
   },
   data () {
     return {
+      shown: true
     }
   },
   watch: {
+    show (n) {
+      this.shown = n
+    }
   }
 })
 
 </script>
 
 <template>
-  <div>
-    group component
-    {{ domainData }}
-    {{ domainUrlGroupData }}
-  </div>
+      <Dialog v-if="show" v-model:visible="shown" :dismissableMask="true" modal header="Группа ссылок" :style="{ 'height': '100%', width: '75vw' }" @hide="$emit('close')">
+        <slot name="content1"></slot>
+      </Dialog>
 </template>
 
 <style lang="scss">

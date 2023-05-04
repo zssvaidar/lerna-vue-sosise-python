@@ -69,4 +69,11 @@ router.get(
     }
 );
 
+router.put(
+    `/parser/domain/:id/group/:group_id`,
+    (request: Request, response: Response, next: NextFunction) => {
+        siteInfoController.setDomainUrlGroupTags(request, response, next);
+    }
+);
+
 export default router;

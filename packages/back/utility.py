@@ -309,7 +309,7 @@ class DomainUrlPath:
         return False
     
     ID=0
-    def go_tree_tag_depth(self, page: Page, item: Locator, depth=0, parent_id = None):
+    def go_tree_tag_depth(self, page: Page, item: Locator, depth=0, tagId = 0, parent_id = 0):
         locator = item.locator('>*')
         try:
             tags = locator.evaluate_all("(elements)=> elements.map(element => { return element.tagName })")
@@ -323,23 +323,22 @@ class DomainUrlPath:
         elements = item.locator('>*').all()
 
         for idx, element in enumerate(elements):
-            if(not textContents[idx].isspace() and textContents[idx] != '' and tags[idx] != 'SCRIPT' and tags[idx] != 'STYLE'):
-                self.ID +=1
+            self.ID += 1
+            if(not textContents[idx].isspace() and textContents[idx] != '' and tags[idx] != 'SCRIPT' and tags[idx] != 'NOSCRIPT' and tags[idx] != 'STYLE'):
                 xpath = xpath_path(element, False).replace('"','\'')
-                # print(xpath)  
                 logging.info(('%s')%(xpath))
-                # try:
-                #     href = page.locator('xpath=%s'%(xpath)).inner_html()
-                #     # href = page.evaluate('() => $x("%s")'%(xpath))
-                #     print(href)
-                # except Exception as e:
-                #     print(e)
-                data = { 'parentId': parent_id, 'tagId': self.ID, 'depth': depth, 'tag': tags[idx], 'text': textContents[idx], 'xpath': xpath}
+                data = { 'parentId': parent_id, 'tagId': self.ID, 'depth': depth, 'tag': tags[idx], 'text': textContents[idx], 'xpath': xpath }
+                logging.info(('ID: %s TAG: %s TEXT: %s PATH: %s')%(self.ID, tags[idx], textContents[idx], xpath))
                 # print(data)
                 self.parser_data.append(data)
                 # print(parent_id, self.ID, 'depth:', depth, 'tag:', tags[idx], 'text:', textContents[idx])
-            self.go_tree_tag_depth(page, element, depth+1, self.ID)
- 
+            else:
+                xpath = xpath_path(element, False).replace('"','\'')
+                data = { 'parentId': parent_id, 'tagId': self.ID, 'depth': depth, 'tag': tags[idx], 'text': '', 'xpath': xpath }
+                self.parser_data.append(data)
+
+            self.go_tree_tag_depth(page, element, depth+1, self.ID, tagId)
+
     def colelct_tag_data(self, page: Page):
         url = self.domain_url
         
@@ -364,6 +363,7 @@ class DomainUrlPath:
                     self.colelct_tag_data(page)
                 tries = self.max_tries
             except Exception as e:
+                print(e)
                 logging.error(e)
                 tries += 1
                 time.sleep(1.5)

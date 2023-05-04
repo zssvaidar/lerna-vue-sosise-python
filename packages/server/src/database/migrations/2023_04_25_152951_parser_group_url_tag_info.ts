@@ -22,6 +22,8 @@ export default class ParserGroupTagInfo extends BaseSchema {
             table.string('tag');
             table.string('text', 1024);
             table.string('xpath');
+            table.boolean('select_tag').defaultTo(false);
+            table.boolean('select_child_tags').defaultTo(false);
 
             table.timestamps(true, true);
         });

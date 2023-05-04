@@ -19,18 +19,30 @@ export default class SiteInfoService {
         return { domainData, domainUrlGroupData };
     }
 
-    public async getDomainUrlGroupInfo (domainId: number, groupId: number): Promise< { domainUrlGroup: PageGroupUrl, urlGroupTag: UrlGroupTagType[]}> {
+    public async getDomainUrlGroupInfo (domainId: number, groupId: number): Promise< { domainUrlGroup: PageGroupUrl, urlGroupTag: UrlGroupTagType[], groupTagsToCollect: UrlGroupTagType[]}> {
         const domainUrlGroup = await this.getDomainUrlGroup(groupId);
         const urlGroupTag = await this.getUrlGroupTag(groupId);
-        return { domainUrlGroup, urlGroupTag };
+        const groupTagsToCollect = await this.getUrlGroupTag(groupId, [1]);
+        return { domainUrlGroup, urlGroupTag, groupTagsToCollect };
     }
 
-    private async getUrlGroupTag (groupId: number): Promise<UrlGroupTagType[]> {
+    public async updateDomainUrlGroupTags (selectedTags: {[id: string]: string}): Promise<void> {
+        const table = 'parser_group_url_tag_info';
+
+        for (const [selectedTag, value] of Object.entries(selectedTags)) {
+            await this.client.table(table)
+               .where('id', selectedTag)
+               .update({ select_tag: value })
+        }
+    }
+
+    private async getUrlGroupTag (groupId: number, active: number[] = [0, 1]): Promise<UrlGroupTagType[]> {
         const table = 'parser_group_url_tag_info';
         const rows = await this.client
             .table(table)
-            .select([ 'id', 'tag_id as tagId', 'parent_id as parentId', 'url_group_id as groupId', 'depth', 'tag', 'text', 'xpath'])
-            .where('url_group_id', groupId);
+            .select([ 'id', 'tag_id as tagId', 'parent_id as parentId', 'url_group_id as groupId', 'depth', 'tag', 'text', 'xpath', 'select_tag as selectTag', 'select_child_tags as selectChildTags'])
+            .where('url_group_id', groupId)
+            .whereIn('select_tag', active);
 
         return rows;
     }
@@ -39,7 +51,7 @@ export default class SiteInfoService {
         const table = 'parser_url_group';
 
         const row = await this.client.table(table)
-            .select(['id', 'domain_id as domainId', 'page_id as pageId', 'split', 'url', 'page_ids as pageIds', 'group_url as groupUrl', 'count'])
+            .select(['id', 'domain_id as domainId', 'page_id as pageId', 'split', 'url', 'page_ids as pageIds', 'group_url as groupUrl', 'count', 'group_ready as groupReady'])
             .where('id', groupId)
             .first();
 
@@ -59,7 +71,7 @@ export default class SiteInfoService {
         const table = 'parser_url_group';
 
         const row = await this.client.table(table)
-            .select(['domain_id as domainId', 'page_id as pageId', 'split', 'url', 'page_ids as pageIds', 'group_url as groupUrl', 'count'])
+            .select(['domain_id as domainId', 'page_id as pageId', 'split', 'url', 'page_ids as pageIds', 'group_url as groupUrl', 'count', 'group_ready as groupReady'])
             .where('domain_id', domainId);
 
         return row;

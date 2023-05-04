@@ -5,7 +5,7 @@ import PageNotFound from '@/views/PageNotFound.vue'
 import WelcomeView from '@/views/WelcomeView.vue'
 import SearchView from '@/views/SearchView.vue'
 import SearchEngineView from '@/views/Dashboard/SearchEngineView.vue'
-import EngineSiteView from '@/views/Dashboard/EngineSiteView.vue'
+import EngineDomainView from '@/views/Dashboard/EngineDomainView.vue'
 import UrlGroupComponent from '@/components/UrlGroupComponent.vue'
 import EngineGroupView from '@/views/Dashboard/EngineGroupView.vue'
 
@@ -41,7 +41,7 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: '/search-engine/:domainId',
     name: 'domainPage',
-    component: EngineSiteView,
+    component: EngineDomainView,
     meta: { requiresAuth: true },
     props: (route) => ({ domainId: Number(route.params.domainId) })
   },

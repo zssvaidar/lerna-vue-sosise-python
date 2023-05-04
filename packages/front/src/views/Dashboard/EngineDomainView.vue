@@ -1,7 +1,6 @@
 <template>
     <div id="engine-site">
-      {{ domainId }}
-      <UrlDomainComponent
+      <DomainComponent
         :domainData="getDomainData"
         :domainUrlGroupData="getDomainUrlGroupData"
       />
@@ -9,14 +8,14 @@
 </template>
 <script lang="ts">
 import { Options, Vue } from 'vue-class-component'
-import UrlDomainComponent from '@/components/UrlDomainComponent.vue' // @ is an alias to /src
+import DomainComponent from '@/components/DomainComponent.vue'
 
 @Options({
   props: {
     domainId: Number
   },
   components: {
-    UrlDomainComponent
+    DomainComponent
   }
 })
 export default class EngineSiteView extends Vue {

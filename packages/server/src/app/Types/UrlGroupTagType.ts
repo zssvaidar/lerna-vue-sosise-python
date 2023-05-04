@@ -6,4 +6,6 @@ export default interface UrlGroupTagType {
     tag: string;
     text: string;
     xpath: string;
+    selectTag: boolean;
+    selectChildTags: boolean;
 }

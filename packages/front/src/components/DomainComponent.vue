@@ -5,7 +5,7 @@ import { defineComponent, PropType } from 'vue'
 export default defineComponent({
   props: {
     domainData: {
-      type: Array as PropType<any>,
+      type: Object as PropType<any>,
       required: true
     },
     domainUrlGroupData: {
@@ -25,12 +25,14 @@ export default defineComponent({
 
 <template>
   <div>
-    domain component
+    <!-- domain component -->
     {{ domainData }}
-    {{ domainUrlGroupData }}
+    <!-- {{ domainUrlGroupData }} -->
   </div>
 </template>
 
 <style lang="scss">
 
+#url-domain {
+}
 </style>

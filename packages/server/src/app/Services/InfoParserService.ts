@@ -77,7 +77,7 @@ export default class InfoParserService extends AbstractParser{
         const table = 'parser_url_group';
 
         const rows = await this.client.table(table)
-            .select([ 'id', 'domain_id as domainId', 'page_id as pageId', 'split as split', 'url as url', 'page_ids as pageIds', 'group_url as groupUrl', 'count as count',])
+            .select([ 'id', 'domain_id as domainId', 'page_id as pageId', 'split as split', 'url as url', 'page_ids as pageIds', 'group_url as groupUrl', 'count as count', 'group_ready as groupReady'])
             .where('domain_id', domainId)
             .modify(function(queryBuilder) {
                 if (!isNull(split)) {

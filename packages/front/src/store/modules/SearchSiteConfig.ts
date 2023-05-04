@@ -1,12 +1,71 @@
 import axios from 'axios'
 
+function listToTree (list: any[]) {
+  let map = {}; let node; const roots: any[] = []; let i
+  const set = new Set()
+
+  for (i = 0; i < list.length; i += 1) {
+    map[list[i].tagId] = i // initialize the map
+    list[i].children = [] // initialize the children
+    list[i].key = list[i].tagId // initialize the children
+    console.log(list[i].selectTag)
+    // list[i].select_tag = false
+    // list[i].select_child_tags = false
+
+    set.add(list[i].depth)
+  }
+
+  console.log(list.length)
+  const depthSet = [...set]
+
+  for (let index = depthSet.length - 1; index >= 0; index -= 1) {
+    const depth = Number(depthSet[index])
+
+    i = list.length - 1
+    while (i >= 0) {
+      node = list[i]
+      if (node.children.length < 1 && node.text.length < 10 && node.depth > depth - 1) {
+        list.splice(i, 1)
+      } else {
+        i -= 1
+      }
+    }
+
+    map = {}
+    for (i = 0; i < list.length; i += 1) {
+      map[list[i].tagId] = i
+    }
+
+    for (i = 0; i < list.length; i += 1) {
+      node = list[i]
+      if (node.parentId && node.depth === depth) {
+        list[map[node.parentId]].children.push(node)
+      }
+    }
+  }
+  console.log(list.length)
+
+  for (let i = list.length - 1; i >= 0; i -= 1) {
+    // for (i = 0; i < list.length; i += 1) {
+    node = list[i]
+    if (node.parentId) {
+      console.log()
+    } else {
+      roots.push(node)
+    }
+  }
+  return roots
+}
+
 export default {
   namespaced: true,
   state: {
     domainData: {},
-    domainUrlGroupData: {},
+    domainUrlGroupData: [],
     groupData: {},
-    groupTags: {}
+    groupTags: [],
+    groupTagNodes: [],
+    groupTagsToCollect: []
   },
   mutations: {
     fetchDomainData (state, payload) {
@@ -14,8 +73,11 @@ export default {
       state.domainUrlGroupData = payload.domainUrlGroupData
     },
     fetchUrlGroupData (state, payload) {
-      state.groupData = payload.groupData
-      state.groupTags = payload.groupTag
+      // console.log(payload.urlGroupTag)
+      state.groupTagNodes = listToTree(payload.urlGroupTag)
+      state.groupData = payload.domainUrlGroup
+      state.groupTags = payload.urlGroupTag
+      state.groupTagsToCollect = payload.groupTagsToCollect
     }
   },
   actions: {
@@ -35,6 +97,15 @@ export default {
         withCredentials: true
       })
       await commit('fetchUrlGroupData', response.data.data)
+    },
+
+    async updateGroupSelectedTags ({ commit }, payload) {
+      const response = await axios({
+        method: 'put',
+        data: payload.selected_tags,
+        url: `${process.env.VUE_APP_API_URL}/parser/domain/${payload.id}/group/${payload.group_id}`,
+        withCredentials: true
+      })
     }
   }
 }

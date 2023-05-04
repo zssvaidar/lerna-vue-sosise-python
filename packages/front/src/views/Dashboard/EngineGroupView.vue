@@ -1,16 +1,18 @@
 <template>
     <div id="engine-group">
-      {{ domainId }}
-      {{ groupId }}
-      <UrlGroupComponent
-        :domainData="getDomainData"
-        :domainUrlGroupData="getDomainUrlGroupData"
+      <GroupComponent
+        :groupData="getGroupData"
+        :groupTags="getGroupTags"
+        :groupTagNodes="getGroupTagNodes"
+        :groupTagsToCollect="getGroupTagsToCollect"
+        :domainId=domainId
+        :groupId="groupId"
       />
     </div>
 </template>
 <script lang="ts">
 import { Options, Vue } from 'vue-class-component'
-import UrlGroupComponent from '@/components/UrlGroupComponent.vue' // @ is an alias to /src
+import GroupComponent from '@/components/GroupComponent.vue' // @ is an alias to /src
 
 @Options({
   props: {
@@ -18,7 +20,7 @@ import UrlGroupComponent from '@/components/UrlGroupComponent.vue' // @ is an al
     groupId: Number
   },
   components: {
-    UrlGroupComponent
+    GroupComponent
   }
 })
 export default class EngineGroupView extends Vue {
@@ -28,12 +30,20 @@ export default class EngineGroupView extends Vue {
     this.$store.dispatch('searchsiteConfig/fetchUrlGroupData', { id: this.domainId, group_id: this.groupId })
   }
 
-  get getDomainData () {
-    return this.$store.state.searchsiteConfig.domainData
+  get getGroupData () {
+    return this.$store.state.searchsiteConfig.groupData
   }
 
-  get getDomainUrlGroupData () {
-    return this.$store.state.searchsiteConfig.domainUrlGroupData
+  get getGroupTags () {
+    return this.$store.state.searchsiteConfig.groupTags
+  }
+
+  get getGroupTagNodes () {
+    return this.$store.state.searchsiteConfig.groupTagNodes
+  }
+
+  get getGroupTagsToCollect () {
+    return this.$store.state.searchsiteConfig.groupTagsToCollect
   }
 }
 </script>

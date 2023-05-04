@@ -534,6 +534,18 @@ export default defineComponent({
         margin-right: 12px;
       }
   }
+
+  @media screen and (max-width: 1800px) {
+    .wrapper {
+      width: 90vw;
+    }
+  }
+
+  @media screen and (max-width: 1300px) {
+    .wrapper {
+      width: 100vw;
+    }
+  }
 }
 
 .search-config.p-dialog {
@@ -589,38 +601,6 @@ export default defineComponent({
         height: 60px;
         overflow: hidden;
       }
-    }
-  }
-}
-@media screen and (max-width: 1800px) {
-  .wrapper {
-    width: 90vw;
-  }
-  #search-config {
-    .wrapper {
-      width: 90vw;
-    }
-  }
-}
-
-@media screen and (max-width: 1450px) {
-  #search-config .menu {
-    .site-list {
-      min-width: 40%;
-    }
-    .site-info {
-      min-width: 55%;
-    }
-  }
-}
-
-@media screen and (max-width: 1300px) {
-  .wrapper {
-    width: 100vw;
-  }
-  #search-config {
-    .wrapper {
-      width: 100vw;
     }
   }
 }

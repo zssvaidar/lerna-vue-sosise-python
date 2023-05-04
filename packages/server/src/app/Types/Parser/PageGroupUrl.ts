@@ -7,4 +7,5 @@ export default interface PageGroupUrl {
     pageIds: number[];
     groupUrl: string;
     count: number;
+    groupReady: boolean;
 }

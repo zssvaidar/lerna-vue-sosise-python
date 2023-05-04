@@ -22,7 +22,7 @@ export default class ParserPageUrlGroup extends BaseSchema {
             table.specificType('page_ids', 'VARCHAR(2048)');
             table.string('group_url').unique();
             table.integer('count');
-            table.boolean('tags_collected').defaultTo(false);
+            table.boolean('group_ready').defaultTo(false);
 
             table.timestamps(true);
         });
