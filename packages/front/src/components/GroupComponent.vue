@@ -1,8 +1,12 @@
 <script lang="ts">
 
-import { defineComponent, PropType, ref, nextTick } from 'vue'
+import { defineComponent, PropType } from 'vue'
+import CollectedTagComponent from '@/components/CollectedTagComponent.vue'
 
 export default defineComponent({
+  components: {
+    CollectedTagComponent
+  },
   props: {
     domainId: Number,
     groupId: Number,
@@ -21,17 +25,43 @@ export default defineComponent({
     groupTagsToCollect: {
       type: Array as PropType<any[]>,
       required: true
+    },
+
+    pageUrls: {
+      type: Array as PropType<any[]>,
+      required: true
+    },
+    pagesData: {
+      type: Object as PropType<any>,
+      required: true
+    },
+    tagDataTypes: {
+      type: Array as PropType<any[]>,
+      required: true
     }
   },
   data () {
     return {
-      someVariableUnderYourControl: 1,
       expandedKeys_: {},
       groupTagNodes_: {},
-      selectTag: {}
+      selectTag: {},
+      groupReady_: false,
+
+      showModal: false,
+      modalHoveredSite: 0,
+      modalHoveredSiteData: 0,
+      groupTagDataTagIds: [] as number[],
+      mapGroupTagData: {} as any,
+      mapPageTag: {} as any
     }
   },
   methods: {
+    showCollectedData () {
+      this.showModal = true
+    },
+    onClose () {
+      this.showModal = false
+    },
     nodeSelected (node) {
       console.log(node)
     },
@@ -44,13 +74,19 @@ export default defineComponent({
     },
     nodeChosen1 (node, nodeChecked) {
       this.findChild(this.groupTagNodes_, node, nodeChecked, 'selectTag')
-      // console.log(this.groupTagNodes_)
     },
     nodeChosen2 (node, nodeChecked) {
       this.findChild(this.groupTagNodes_, node, nodeChecked, 'selectChildTags')
     },
     saveSelectTag () {
       this.$store.dispatch('searchsiteConfig/updateGroupSelectedTags', { id: this.domainId, group_id: this.groupId, selected_tags: this.selectTag })
+      this.reloadPage()
+    },
+    saveGroupReady () {
+      this.groupReady_ = !this.groupReady_
+      this.$store.dispatch('searchsiteConfig/updateGroupReady', { id: this.domainId, group_id: this.groupId, group_ready: this.groupReady_ })
+    },
+    reloadPage () {
       setTimeout(() => {
         location.reload()
       }, 300)
@@ -72,6 +108,29 @@ export default defineComponent({
           this.findChild(node.children, target, nodeChecked, value)
         }
       }
+    },
+    siteHovered (index) {
+      this.modalHoveredSite = index
+    },
+    siteDataHovered (index) {
+      this.modalHoveredSiteData = index
+    },
+    getGroupTagDataTagIds (): number[] {
+      return this.groupTagsToCollect.map(data => data.tagId)
+    },
+    getMapGroupTagData () {
+      const obj = {}
+      for (const data of this.groupTagsToCollect) {
+        obj[data.id] = data
+      }
+      return obj
+    },
+    getMapPageTag (pageId) {
+      const obj = {}
+      for (const data of this.pagesData[pageId]) {
+        obj[data.groupTagId] = data
+      }
+      return obj
     }
   },
   watch: {
@@ -82,6 +141,7 @@ export default defineComponent({
       deep: true
     },
     groupTagNodes (n) {
+      this.groupReady_ = this.groupData.groupReady
       this.groupTagNodes_ = n
     }
   },
@@ -90,6 +150,17 @@ export default defineComponent({
       const getKeysFromTree = (tree) => tree.flatMap(this.getKeysFromNode)
       getKeysFromTree(this.groupTagNodes).forEach((key) => { this.expandedKeys_[key] = true })
     }, 500)
+
+    this.$store.dispatch('searchsiteConfig/fetchGroupCollectedData', { id: this.domainId, group_id: this.groupId })
+      .then((result) => {
+        setTimeout(() => {
+          this.groupTagDataTagIds = this.getGroupTagDataTagIds()
+          this.mapGroupTagData = this.getMapGroupTagData()
+          for (const pageUrl of this.pageUrls) {
+            this.mapPageTag[pageUrl.id] = this.getMapPageTag(pageUrl.id)
+          }
+        }, 500)
+      })
   }
 })
 
@@ -97,17 +168,21 @@ export default defineComponent({
 
 <template>
   <div id="url-group">
-    <!-- group component -->
-    <!-- {{ groupTags }} -->
     <div class="wrapper">
       <div class="content">
         <h1>Данные группы</h1>
-
+          <div v-if="groupReady_" class='menu-action'>
+            <Button @click="showCollectedData" label="Собранные данные"></Button>
+          </div>
           <div class="menu">
             <div>
             <Card :class="['menu-card-1']">
               <template #content>
 
+                <div class="card-1-action">
+                  <Button v-if="!groupReady_" class="p-button-outlined p-button-sm" label="Сбор данных" @click="saveGroupReady"></Button>
+                  <Button v-if="groupReady_" class="p-button-outlined p-button-sm p-button-danger" label="Сбор данных" @click="saveGroupReady"></Button>
+                </div>
                 <fieldset class="group-fieldset">
 
                   <div class="row">
@@ -160,6 +235,13 @@ export default defineComponent({
                         {{ groupData.count }}
                       </div>
                     </div>
+                    <div class="info-item">
+                      <label>Сбор данных:</label>
+                      <div>
+                        <template v-if="groupReady_">Включен</template>
+                        <template v-if="!groupReady_">Отключен</template>
+                      </div>
+                    </div>
                   </div>
 
                 </fieldset>
@@ -203,7 +285,6 @@ export default defineComponent({
                         </div>
                       </div>
                     </div>
-                    <!-- {{ groupTagToCollect }} -->
 
                   </template>
                 </ScrollPanel>
@@ -217,7 +298,6 @@ export default defineComponent({
                 <div class="tree-action">
                   <Button class="p-button-outlined" label="Сохранить" @click="saveSelectTag"></Button>
                 </div>
-                <!-- {{ groupTagNodes[1] }} -->
                 <Tree2
                   :value="groupTagNodes_"
                   :expandedKeys="expandedKeys_"
@@ -225,7 +305,6 @@ export default defineComponent({
                   @node-chosen1="nodeChosen1"
                   @node-chosen2="nodeChosen2"
                   >
-                <!-- @nodeSelect="nodeSelected" -->
                   <template #default="slotProps">
                     {{ slotProps.node.id }}
                     {{ slotProps.node.depth }}
@@ -241,6 +320,77 @@ export default defineComponent({
 
       </div>
     </div>
+
+    <CollectedTagComponent :id="['group-page-modal']" :show="showModal" @close="onClose">
+      <template #content1 >
+        <fieldset class="group-page-fieldset">
+
+          <div class="table">
+
+            <template v-for="(pageUrl, index) in pageUrls" :key="pageUrl.id">
+              <div class="col" v-if="index==0">
+                <div class="cell cell-group-action">
+                  <h3>
+                    Тип данных
+                  </h3>
+                </div>
+                <template v-for="(groupTagData) in mapGroupTagData" :key="groupTagData.id">
+                  <div class="cell" :class="{'active-modal-page-data-item': (groupTagData.tagId === Number(modalHoveredSiteData))}">
+                    <Dropdown
+                    :options="tagDataTypes"
+                    optionLabel="label"
+                    optionValue="id"
+
+                    />
+                  </div>
+                </template>
+              </div>
+              <div class="col" v-if="index==0">
+                <div class="cell cell-group-url">
+                  <h3>
+                    Сведения группы #{{ groupData.pageId }}
+                  </h3>
+                  <div class="cell-info">
+                    <label>Путь ссылки:</label>
+                    <div>
+                      {{ groupData.url.split('/').pop()  }}
+                    </div>
+                  </div>
+                </div>
+                <template v-for="(groupTagData) in mapGroupTagData" :key="groupTagData.id">
+                  <div class="cell" :class="{'active-modal-page-data-item': (groupTagData.tagId === Number(modalHoveredSiteData))}">[{{ groupTagData.tag }}] {{ groupTagData.text }} </div>
+                </template>
+              </div>
+              <div class="col">
+                <div class="cell cell-page-url" :class="{'active-modal-page': index === modalHoveredSite }" @mouseover="siteHovered(index)">
+                  <h3>
+                    Сведения сайта #{{ pageUrl.id}}:
+                  </h3>
+                  <div class="cell-info">
+                    <label>Путь ссылки:</label>
+                    <div>
+                      {{ pageUrl.url.split('/').pop() }}
+                    </div>
+                  </div>
+                </div>
+                <template v-for="(groupTagData, tagId) in mapGroupTagData" :key="groupTagData.id">
+                  <template v-if="mapPageTag[pageUrl.id]">
+                    <div class="cell" v-if="mapPageTag[pageUrl.id][tagId]" @mouseover="siteDataHovered(tagId)" :class="{'active-modal-page-data-item': (tagId === modalHoveredSiteData /* && index === modalHoveredSite */) }">
+                      {{ mapPageTag[pageUrl.id][tagId].text }}
+                    </div>
+                    <div class="cell" v-if="!mapPageTag[pageUrl.id][tagId]">
+                    </div>
+                  </template>
+                  <!-- <div class="cell" v-if="!mapPageTag[pageUrl.id]" @mouseover="siteDataHovered(tagId)"></div> -->
+                </template>
+              </div>
+
+            </template>
+          </div>
+
+        </fieldset>
+      </template>
+    </CollectedTagComponent>
   </div>
 </template>
 
@@ -263,8 +413,11 @@ export default defineComponent({
 }
 
 #url-group {
+  .menu-action {
+    padding-top: .35rem;
+  }
   .menu {
-    margin-top: 1rem;
+    margin-top: .45rem;
     display: flex;
     align-items: start;
     & > * {
@@ -287,9 +440,11 @@ export default defineComponent({
   .menu >div {
     display: flex;
     flex-direction: column;
+    max-width: 50%;
+  }
+  .menu {
   }
   .menu .menu-card-1 {
-    // max-width: 40%;
 
     fieldset {
       padding-right: 1rem;
@@ -305,6 +460,9 @@ export default defineComponent({
             color: var(--label-color);
             user-select: none;
           }
+          &>div {
+            word-break:break-all;
+          }
         }
         &:last-child {
           padding-bottom: 1rem;
@@ -313,6 +471,15 @@ export default defineComponent({
     }
   }
 
+  .menu .menu-card-1 {
+    position: relative;
+    .card-1-action {
+      position: absolute;
+      z-index: 1;
+      right: 1rem;
+      bottom: 1rem;
+    }
+  }
   .menu .menu-card-2 {
     margin-left: 1rem;
     // width: 30%;
@@ -402,4 +569,59 @@ export default defineComponent({
     color: #495057!important;
   }
 }
+
+#group-page-modal {
+  .group-page-fieldset {
+    display: flex;
+    flex-direction: row;
+    .table {
+      display: flex;
+    }
+    .table .cell-group-url {
+      width: 30rem;
+    }
+    .table .cell-group-action {
+      width: 10rem;
+      height: 5.6rem!important;
+    }
+    .col {
+      display: flex;
+      flex-direction: column;
+      .cell {
+        border: 1px solid var(--border-color);
+        overflow: hidden;
+        min-height: 4rem;
+        height: 4rem;
+        padding:.45rem;
+        max-width: 10rem;
+        max-width: 30rem;
+        &:hover {
+          background: #eeefff!important;
+          color: #495057!important;
+        }
+        .cell-info {
+          margin-top: .2rem;
+          label {
+            color: var(--label-color);
+            user-select: none;
+          }
+          &>div {
+          }
+        }
+      }
+      .cell-page-url, .cell-group-url {
+        height: 5.6rem;
+      }
+    }
+    .active-modal-page {
+      width: 30rem;
+    }
+    .active-modal-page-data-item {
+      width: 30rem;
+      height: 12rem!important;
+      overflow-y: scroll!important;
+    }
+  }
+}
+
 </style>

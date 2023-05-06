@@ -36,6 +36,26 @@ class ParserPageGroupUrlType():
         self.pageIds = data['pageIds']
         self.count = data['count']
 
+class GroupUrlTagType():
+    def __init__(self, data):
+        self.id = data['id']
+        self.tagId = data['tagId']
+        self.parentId = data['parentId']
+        self.groupId = data['groupId']
+        self.depth = data['depth']
+        self.tag = data['tag']
+        self.text = data['text']
+        self.xpath = data['xpath']
+        self.selectTag = data['selectTag']
+
+class PageUrlType():
+    def __init__(self, data):
+        self.id = data['id']
+        self.domainId = data['domainId']
+        self.url = data['url']
+        self.type = data['type']
+        self.groupId = data['groupId']
+
 class ApiRequests():
     def __init__(self):
         self.crawler_domain_url: str = 'http://localhost:10000/api/v1/domainurls/%d'
@@ -44,6 +64,9 @@ class ApiRequests():
         self.parser_create_url_group: str = 'http://localhost:10000/api/v1/parser/domain/%s/urlGroups'
         self.parser_url_group: str = 'http://localhost:10000/api/v1/parser/domain/%s/urlGroups?split=%s'
         self.parser_url_group_tag_store: str = 'http://localhost:10000/api/v1/parser/domain/%s/urlGroups/%s/urlGroupTags'
+        
+        self.group_page_and_tag_info: str = 'http://localhost:10000/api/v1/parser/domain/%s/urlGroups/%s/pageTags'
+        self.page_tag_info: str = 'http://localhost:10000/api/v1/parser/domain/%s/urlGroups/%s/page/%s/pageTags'
 
     def get_parser_domain_link(self, id: int, log=False) -> list[CrawlerDomainType]:
         try:
@@ -90,6 +113,16 @@ class ApiRequests():
         response = requests.get(url)
         
         return response.json()['data']
+    
+    def get_stored_group_tag_info(self, domain_id, group_id):
+        url = self.group_page_and_tag_info % (domain_id, group_id)
+        response = requests.get(url)
+        
+        return response.json()['data']
+
+    def post_page_tag_data(self, domain_id, group_id, page_id, parser_data):
+        url = self.page_tag_info % (domain_id, group_id, page_id)
+        response = requests.post(url, json = parser_data)
 
 class WebCrawler():
     def __init__(self):
@@ -116,6 +149,12 @@ class WebCrawler():
 
     def prepare_page_group_links(self, url_data=[]):
         self.url_data: list[ParserPageGroupUrlType] = url_data
+
+    def prepare_page_group_tags(self, domain_id, group_id, page_url = [], group_tag_info=[]):
+        self.domain_id = domain_id
+        self.group_id = group_id
+        self.tag_data: list[GroupUrlTagType] = group_tag_info
+        self.page_data: list[PageUrlType] = page_url
 
     def run_crawler(self, remote_api: ApiRequests, script):
 
@@ -165,6 +204,30 @@ class WebCrawler():
                 filter.save_data(True)
 
 
+    def store_page_tags_data(self, domain_id, group_id, page_id, parser_data, api: ApiRequests):
+        api.post_page_tag_data(domain_id, group_id, page_id, parser_data)
+
+    def run_collect_tag_tag_data(self, remote_api: ApiRequests):
+        
+        def method_save_data(domain_id, group_id, page_id, parser_data):
+            self.store_page_tags_data(domain_id, group_id, page_id, parser_data, remote_api)
+
+        with sync_playwright() as p:
+            browser_type = p.chromium
+            browser = browser_type.launch(headless=False)
+            page = browser.new_page()
+
+            timeout = 800
+            page.set_default_navigation_timeout(5000)
+            page.set_default_timeout(timeout)
+            
+            for item in self.page_data:
+                filter = UrlPage(item['id'], item['url'], self.tag_data, method_save_data)
+                filter.run_crawling(page)
+                filter.save_data(self.domain_id, self.group_id)
+        
+            
+            
 class ConnError(Exception):
     pass
 
@@ -368,5 +431,32 @@ class DomainUrlPath:
                 tries += 1
                 time.sleep(1.5)
                 
+class UrlPage:
+    def __init__(self, page_id, url, tag_data: list[GroupUrlTagType], method_save_data):
+        self.page_id = page_id
+        self.url = url
+        self.tag_data = tag_data
+        self.method_save_data = method_save_data
 
-        
+        self.parser_data = {}
+
+    def save_data(self, domain_id, group_id):
+        self.method_save_data(domain_id, group_id, self.page_id, self.parser_data)
+    
+    def run_crawling(self, page: Page):
+
+        page.goto(self.url)
+
+        for item in self.tag_data:
+            self.parser_data[item['id']] = { 'tag': item['tag'], 'group_tag_id': item['id'],'tag_id': item['tagId'] }
+            try:
+                locator = page.locator('xpath=/'+item['xpath']).first
+                textContents = locator.evaluate("(element) => { var textContent = '';if(element.childNodes.length > 0) for (let node of element.childNodes)if(node.nodeType == Node.TEXT_NODE) textContent+=node.textContent; return textContent; }")
+                self.parser_data[item['id']]['text'] = textContents
+                if(item['tag'] == 'A'):
+                    href = locator.evaluate("(element)=> element.getAttribute('href') ")
+                    if(href is not None):
+                        self.parser_data[item['id']]['href'] = href
+            except Exception as e:
+                self.parser_data[item['id']] = { 'tag': item['tag'], 'group_tag_id': item['id'], 'tag_id': item['tagId'], 'found': False }
+                logging.error(e)

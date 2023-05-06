@@ -76,4 +76,32 @@ router.put(
     }
 );
 
+router.put(
+    `/parser/domain/:id/group/:group_id/ready`,
+    (request: Request, response: Response, next: NextFunction) => {
+        siteInfoController.setDomainUrlGroupReady(request, response, next);
+    }
+);
+
+router.get(
+    `/parser/domain/:id/group/:group_id/collectedData`,
+    (request: Request, response: Response, next: NextFunction) => {
+        siteInfoController.serveGroupCollectedData(request, response, next);
+    }
+);
+
+router.get(
+    `/parser/domain/:id/urlGroups/:group_id/pageTags`,
+    (request: Request, response: Response, next: NextFunction) => {
+        siteInfoController.serveGroupPagesAndGroupTagData(request, response, next);
+    }
+);
+
+router.post(
+    `/parser/domain/:id/urlGroups/:group_id/page/:page_id/pageTags`,
+    (request: Request, response: Response, next: NextFunction) => {
+        siteInfoController.savePageTagData(request, response, next);
+    }
+);
+
 export default router;

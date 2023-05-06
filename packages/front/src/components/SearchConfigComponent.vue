@@ -155,10 +155,16 @@ export default defineComponent({
           <div class="menu">
             <Card :class="['site-list']">
               <template #content>
-                <ScrollPanel v-if="domains.length" style="width: 100%; height: 40vh" class="custombar1">
+                <ScrollPanel v-if="domains.length" style="width: 100%; height: 75vh" class="custombar1">
                   <template v-for="(domain) in domains" :key="domain.id">
                     <div class="row" @click="selectSite(domain.id)">
-                        <div class="domain-link">  <router-link :to="{ name: 'domainPage', params: { domainId: domain.id }}" > link </router-link>  </div>
+
+                        <div class="domain-link">
+                          <router-link :to="{ name: 'domainPage', params: { domainId: domain.id }}"  custom v-slot="{ navigate }">
+                            <Button class="p-button-sm p-button-outlined" @click="navigate" role="link">Данные сайта</Button>
+                          </router-link>
+                        </div>
+
                         <div class="row-info">
                           <div>
                             <label for="">Ид:</label>
@@ -174,11 +180,13 @@ export default defineComponent({
                           </div>
                         </div>
                         <div class="row-action">
-                          <Button icon="pi pi-trash" label="Удалить" @click="removeDomain($event, domain.id)" class="delete-row p-button-sm p-button-danger p-button-outlined"/>
-                          <Button label="Запустить сбор ссылок" @click="startUrlCollect(domain.id)" class="start-url-collect p-button-sm p-button-outlined"/>
+                          <Button icon="pi pi-trash" label="Удалить" @click="removeDomain($event, domain.id)" class="p-button-sm p-button-danger p-button-outlined"/>
                         </div>
                         <div class="row-action">
-                          <Button label="Собрать группы ссылок" @click="startUrlGroup(domain.id)" class="p-button-sm p-button-outlined"/>
+                          <Button label="Запустить сбор ссылок" @click="startUrlCollect(domain.id)" class="p-button-sm p-button-outlined"/>
+                        </div>
+                        <div class="row-action">
+                          <Button label="Запустить сбор группы ссылок" @click="startUrlGroup(domain.id)" class="p-button-sm p-button-outlined"/>
                         </div>
                         <div class="row-action">
                           <Button label="Запустить сбор html тегов по группам" @click="startGroupUrlTagCollection(domain.id)" class="p-button-sm p-button-outlined"/>
@@ -248,8 +256,15 @@ export default defineComponent({
                             <div>
                               <ScrollPanel style="width: 100%; height: 40vh" >
                                 <template v-for="(urlGroup) in urlGroups" :key="urlGroup.id">
-                                  <div class="row" @click="selectGroup(urlGroup.id, key, urlGroup)">
+                                  <div class="row">
                                       <div class="row-info">
+                                        <div class="group-link" >
+                                          <Button class="p-button-sm" @click="selectGroup(urlGroup.id, key, urlGroup)">Просмотреть ссылки</Button>
+
+                                          <router-link :to="{ name: 'domainGroupPage', params: { domainId: selectedSite, groupId: urlGroup.id }}" custom v-slot="{ navigate }">
+                                            <Button class="p-button-sm" @click="navigate" role="link">Открыть группу</Button>
+                                          </router-link>
+                                        </div>
 
                                         <div>
                                           <label for="">Ид группы:</label>
@@ -365,7 +380,7 @@ export default defineComponent({
         flex: 1 1;
       }
       &>*:last-child {
-        margin-left: 2rem;
+        margin-left: 1rem;
       }
       .p-card {
         box-shadow: none;
@@ -390,7 +405,7 @@ export default defineComponent({
         }
       }
       .site-list {
-        min-width: 27%;
+        max-width: 32%;
         .row {
           padding: 1.25rem 0 .5rem 1.25rem;
           display: flex;
@@ -404,11 +419,13 @@ export default defineComponent({
             color: #000;
           }
           .domain-link {
-            margin-left: auto;
+            z-index: 1;
+            position: absolute;
+            right: 2rem;
           }
         }
         .row .row-action {
-          margin: .6rem 0;
+          margin-top: .45rem;
         }
         .row .row-info {
           display: flex;
@@ -443,7 +460,7 @@ export default defineComponent({
   }
   .menu {
     .site-info {
-      min-width: 70%;
+      // min-width: 70%;
       fieldset.domain-fieldset {
         .info-item {
           &:nth-child(2) {
@@ -506,6 +523,14 @@ export default defineComponent({
             &>* {
               span {
                 white-space: nowrap;
+              }
+            }
+            .group-link {
+              z-index: 1;
+              position: absolute;
+              right: 2rem;
+              &>*:not(:first-child) {
+                margin-left: .35rem;
               }
             }
           }

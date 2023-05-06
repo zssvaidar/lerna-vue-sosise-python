@@ -37,4 +37,14 @@ export default class ServerScriptService {
 
         return 'process ran';
     }
+
+    public async runParserForPageUrlTags(domainId: any, groupId: any): Promise<string> {
+        const convertResult = spawn(`./myenv/bin/python3`, [`4_project_page_html_data_collector.py`, domainId, groupId ], {
+            detached: true,
+            stdio: 'ignore',
+            cwd: `${process.cwd()}/../back`
+        });
+
+        return 'process ran';
+    }
 }

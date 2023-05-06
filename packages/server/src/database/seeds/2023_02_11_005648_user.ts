@@ -23,6 +23,12 @@ export default class User extends BaseSchema {
         const hashPass = crypto.createHash('sha256').update('123').digest('base64');
         // Prepare data to seed
         const data: any = [
+            {   username: 'test@test.kz',
+                email: 'test@test.kz',
+                password: hashPass,
+                is_admin: true,
+                is_active: true
+            },
             {   username: 'zssvaidar@gmail.com',
                 email: 'zssvaidar@gmail.com',
                 password: hashPass,

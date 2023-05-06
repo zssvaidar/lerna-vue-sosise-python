@@ -8,9 +8,6 @@ function listToTree (list: any[]) {
     map[list[i].tagId] = i // initialize the map
     list[i].children = [] // initialize the children
     list[i].key = list[i].tagId // initialize the children
-    console.log(list[i].selectTag)
-    // list[i].select_tag = false
-    // list[i].select_child_tags = false
 
     set.add(list[i].depth)
   }
@@ -24,7 +21,7 @@ function listToTree (list: any[]) {
     i = list.length - 1
     while (i >= 0) {
       node = list[i]
-      if (node.children.length < 1 && node.text.length < 10 && node.depth > depth - 1) {
+      if (node && node.children.length < 1 && node.text.length < 10 && node.depth > depth - 1) {
         list.splice(i, 1)
       } else {
         i -= 1
@@ -65,7 +62,11 @@ export default {
     groupData: {},
     groupTags: [],
     groupTagNodes: [],
-    groupTagsToCollect: []
+    groupTagsToCollect: [],
+    tagDataTypes: [],
+
+    pageUrls: [],
+    pagesData: {}
   },
   mutations: {
     fetchDomainData (state, payload) {
@@ -78,6 +79,11 @@ export default {
       state.groupData = payload.domainUrlGroup
       state.groupTags = payload.urlGroupTag
       state.groupTagsToCollect = payload.groupTagsToCollect
+      state.tagDataTypes = payload.tagDataTypes
+    },
+    fetchGroupCollectedData (stage, payload) {
+      stage.pageUrls = payload.pageUrls
+      stage.pagesData = payload.pagesData
     }
   },
   actions: {
@@ -102,10 +108,30 @@ export default {
     async updateGroupSelectedTags ({ commit }, payload) {
       const response = await axios({
         method: 'put',
-        data: payload.selected_tags,
+        data: payload,
         url: `${process.env.VUE_APP_API_URL}/parser/domain/${payload.id}/group/${payload.group_id}`,
         withCredentials: true
       })
+    },
+
+    async updateGroupReady ({ commit }, payload) {
+      const response = await axios({
+        method: 'put',
+        data: payload,
+        url: `${process.env.VUE_APP_API_URL}/parser/domain/${payload.id}/group/${payload.group_id}/ready`,
+        withCredentials: true
+      })
+    },
+
+    async fetchGroupCollectedData ({ commit }, payload) {
+      const response = await axios({
+        method: 'get',
+        data: payload,
+        url: `${process.env.VUE_APP_API_URL}/parser/domain/${payload.id}/group/${payload.group_id}/collectedData`,
+        withCredentials: true
+      })
+      await commit('fetchGroupCollectedData', response.data.data)
     }
+
   }
 }

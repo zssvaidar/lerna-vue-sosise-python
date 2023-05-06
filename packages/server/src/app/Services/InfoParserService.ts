@@ -37,7 +37,8 @@ export default class InfoParserService extends AbstractParser{
             from (
                 select group_concat(';', id, ';') search_ids, JSON_ARRAYAGG(id) ids, SUBSTRING_INDEX(url, '/', ${split}) groupUrl, count(*) c
                 from page_url
-                where SUBSTRING_INDEX(url, '/', ${split+1}) = url
+                where SUBSTRING_INDEX(url, '/', ${split+1}) = url 
+                and SUBSTRING_INDEX(url, '/', -1) != ''
                 group by groupUrl
             ) subq
             join page_url

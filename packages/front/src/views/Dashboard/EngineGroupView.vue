@@ -7,6 +7,10 @@
         :groupTagsToCollect="getGroupTagsToCollect"
         :domainId=domainId
         :groupId="groupId"
+        :tagDataTypes="getTagDataTypes"
+
+        :pageUrls="getPageUrls"
+        :pagesData="getPagesData"
       />
     </div>
 </template>
@@ -44,6 +48,18 @@ export default class EngineGroupView extends Vue {
 
   get getGroupTagsToCollect () {
     return this.$store.state.searchsiteConfig.groupTagsToCollect
+  }
+
+  get getPageUrls () {
+    return this.$store.state.searchsiteConfig.pageUrls
+  }
+
+  get getPagesData () {
+    return this.$store.state.searchsiteConfig.pagesData
+  }
+
+  get getTagDataTypes () {
+    return this.$store.state.searchsiteConfig.tagDataTypes
   }
 }
 </script>

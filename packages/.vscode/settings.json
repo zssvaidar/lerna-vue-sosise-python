@@ -1,6 +1,6 @@
 {
     "files.exclude": {
-        // "**/node_modules/": true,
+        "**/node_modules/": true,
         "**/docker/": true,
         "**/docs/": true,
         "**/.dock/": true,
@@ -39,5 +39,11 @@
         "**/__pycache__/": true,
 
         "**/__init__.py": true
+    },
+    "workbench.colorCustomizations": {
+        "[Hackers Haze]": {
+            "editor.background": "#000000"
+        },
     }
+    
 }

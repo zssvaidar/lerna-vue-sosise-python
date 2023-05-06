@@ -68,7 +68,7 @@ export default class SiteInfoController {
                 data: null
             };
 
-            const selectedTags = request.body;
+            const selectedTags = request.body.selected_tags;
             httpResponse.data = await this.service.updateDomainUrlGroupTags(selectedTags);
             
             // Send response
@@ -77,4 +77,101 @@ export default class SiteInfoController {
             next(error);
         }
     }
+
+    /**
+     *
+     */
+    public async setDomainUrlGroupReady(request: Request, response: Response, next: NextFunction) {
+        try {
+            // Prepare http response
+            const httpResponse: HttpResponse = {
+                code: 1000,
+                message: 'Success setDomainUrlGroupReady',
+                data: null
+            };
+
+            const domainId = Number(request.params.domain_id);
+            const groupId = Number(request.params.group_id);
+            const groupReady = request.body.group_ready;
+
+            httpResponse.data = await this.service.updateDomainUrlGroupReady(domainId, groupId, groupReady);
+            
+            // Send response
+            return response.send(httpResponse);
+        } catch (error) {
+            next(error);
+        }
+    }
+
+    /**
+     *
+     */
+    public async serveGroupCollectedData(request: Request, response: Response, next: NextFunction) {
+        try {
+            // Prepare http response
+            const httpResponse: HttpResponse = {
+                code: 1000,
+                message: 'Success serveGroupCollectedData',
+                data: null
+            };
+
+            const groupId = Number(request.params.group_id);
+
+            httpResponse.data = await this.service.getGroupCollectedData(groupId);
+            
+            // Send response
+            return response.send(httpResponse);
+        } catch (error) {
+            next(error);
+        }
+    }
+
+    /**
+     *
+     */
+       public async serveGroupPagesAndGroupTagData(request: Request, response: Response, next: NextFunction) {
+        try {
+            // Prepare http response
+            const httpResponse: HttpResponse = {
+                code: 1000,
+                message: 'Success serveGroupPagesAndGroupTagData',
+                data: null
+            };
+
+            const groupId = Number(request.params.group_id);
+            
+            httpResponse.data = await this.service.getGroupPagesAndGroupTagData(groupId);
+            
+            // Send response
+            return response.send(httpResponse);
+        } catch (error) {
+            next(error);
+        }
+    }
+
+    /**
+     *
+     */
+    public async savePageTagData(request: Request, response: Response, next: NextFunction) {
+        try {
+            // Prepare http response
+            const httpResponse: HttpResponse = {
+                code: 1000,
+                message: 'Success serveGroupPagesAndGroupTagData',
+                data: null
+            };
+
+            const domainId= Number(request.params.domain_id);
+            const groupId = Number(request.params.group_id);
+            const pageId = Number(request.params.page_id);
+            
+            httpResponse.data = await this.service.savePageTagData(groupId, pageId, request.body);
+            
+            // Send response
+            return response.send(httpResponse);
+        } catch (error) {
+            next(error);
+        }
+    }
+    
 }
