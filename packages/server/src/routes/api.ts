@@ -5,6 +5,8 @@ import DocumentationBasicAuthMiddleware from "../app/Http/Middlewares/Documentat
 import authRoutes from "./auth";
 import crawlerRoutes from "./crawler";
 import parserRoutes from "./parser";
+import siteRoutes from "./site";
+
 const router = express.Router();
 
 const infoController = new InfoController();
@@ -27,6 +29,7 @@ const API_VERSION = "v1";
 router.use(`/api/${API_VERSION}`, authRoutes);
 router.use(`/api/${API_VERSION}`, crawlerRoutes);
 router.use(`/api/${API_VERSION}`, parserRoutes);
+router.use(`/api/${API_VERSION}`, siteRoutes);
 
 // Documentation
 const documentaionBasicAuthMiddleware = new DocumentationBasicAuthMiddleware();

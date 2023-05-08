@@ -5,3 +5,8 @@ pyee==9.0.4
 typing_extensions==4.4.0
 requests
 pydash
+pandas
+mysql-connector-python
+pip install scikit-learn
+pip install fasttext
+

@@ -1,6 +1,5 @@
 import express from "express";
 import { Request, Response, NextFunction } from "express";
-import CrawlerController from "../app/Http/Controllers/CrawlerController";
 import InfoParserController from "../app/Http/Controllers/InfoParserController";
 import SiteInfoController from "../app/Http/Controllers/SiteInfoController";
 
@@ -84,7 +83,7 @@ router.put(
 );
 
 router.get(
-    `/parser/domain/:id/group/:group_id/collectedData`,
+    `/parser/domain/:domain_id/group/:group_id/collectedData`,
     (request: Request, response: Response, next: NextFunction) => {
         siteInfoController.serveGroupCollectedData(request, response, next);
     }

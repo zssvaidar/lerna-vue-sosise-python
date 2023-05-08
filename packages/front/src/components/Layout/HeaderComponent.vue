@@ -24,20 +24,14 @@ export default {
         },
         {
           label: 'Поиск',
-          icon: 'pi pi-fw pi-users',
-          to: '/data-search',
-          command: (event) => {
-            //
-          }
+          icon: 'pi pi-fw pi-search',
+          to: '/data-search'
         },
         {
-          label: 'Пойск данных',
+          label: 'Сбор данных',
           visible: (args) => this.getUser().isAdmin ?? false,
           icon: 'pi pi-fw pi-database',
-          to: '/search-engine',
-          command: (event) => {
-            //
-          }
+          to: '/search-engine'
         },
         {
           label: 'Профиль',
@@ -95,7 +89,7 @@ export default {
 </template>
 
 <style>
-.wrapper {
+header .wrapper {
     width: 75vw;
     margin-left: auto;
     margin-right: auto;

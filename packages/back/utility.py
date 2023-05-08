@@ -218,13 +218,17 @@ class WebCrawler():
             page = browser.new_page()
 
             timeout = 800
-            page.set_default_navigation_timeout(5000)
+            page.set_default_navigation_timeout(30000)
             page.set_default_timeout(timeout)
             
             for item in self.page_data:
-                filter = UrlPage(item['id'], item['url'], self.tag_data, method_save_data)
-                filter.run_crawling(page)
-                filter.save_data(self.domain_id, self.group_id)
+                try:
+                    filter = UrlPage(item['id'], item['url'], self.tag_data, method_save_data)
+                    filter.run_crawling(page)
+                    filter.save_data(self.domain_id, self.group_id)
+                except Exception as e:
+                    logging.error(e)
+
         
             
             

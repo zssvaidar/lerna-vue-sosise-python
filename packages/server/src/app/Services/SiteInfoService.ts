@@ -6,7 +6,6 @@ import LoggerService from "sosise-core/build/Services/Logger/LoggerService";
 import serviceConfig from "../../config/serviceConfig";
 import CrawlerDomainType from "../Types/Back/Crawler/CrawlerDomainType";
 import PageUrlDataType from "../Types/PageUrlDataType";
-import DomainUrlType from "../Types/Parser/DomainUrlType";
 import PageGroupUrl from "../Types/Parser/PageGroupUrl";
 import PageUrlType from "../Types/Parser/PageUrlType";
 import TagDataType from "../Types/Site/TagDataType";
@@ -35,7 +34,7 @@ export default class SiteInfoService {
         domainUrlGroup: PageGroupUrl, urlGroupTag: UrlGroupTagType[], groupTagsToCollect: UrlGroupTagType[],
         tagDataTypes: TagDataType[]
         }> {
-        const domainUrlGroup = await this.getDomainUrlGroup(groupId);
+        const domainUrlGroup = await this.getDomainUrlGroup(domainId, groupId);
         const urlGroupTag = await this.getUrlGroupTag(groupId);
         const groupTagsToCollect = await this.getUrlGroupTag(groupId, [1]);
         console.log(groupTagsToCollect);
@@ -203,12 +202,13 @@ export default class SiteInfoService {
             .select(['id', 'label']);
     }
 
-    private  async getDomainUrlGroup (groupId: number): Promise<PageGroupUrl> {
+    private  async getDomainUrlGroup (domainId: number, groupId: number): Promise<PageGroupUrl> {
         const table = 'parser_url_group';
 
         const row = await this.client.table(table)
             .select(['id', 'domain_id as domainId', 'page_id as pageId', 'split', 'url', 'page_ids as pageIds', 'group_url as groupUrl', 'count', 'group_ready as groupReady'])
             .where('id', groupId)
+            .where('domain_id', domainId)
             .first();
 
         return row;

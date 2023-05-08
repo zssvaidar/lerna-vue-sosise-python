@@ -1,5 +1,4 @@
 import BaseSchema from 'sosise-core/build/Database/BaseSchema';
-import * as faker from 'faker';
 
 /**
  * If you need more information, see: http://knexjs.org/#Schema ; https://www.npmjs.com/package/faker

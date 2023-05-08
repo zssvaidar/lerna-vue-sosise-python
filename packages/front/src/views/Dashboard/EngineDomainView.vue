@@ -21,15 +21,15 @@ import DomainComponent from '@/components/DomainComponent.vue'
 export default class EngineSiteView extends Vue {
   domainId
   mounted (): void {
-    this.$store.dispatch('searchsiteConfig/fetchDomainData', { id: this.domainId })
+    this.$store.dispatch('parserConfig/fetchDomainData', { id: this.domainId })
   }
 
   get getDomainData () {
-    return this.$store.state.searchsiteConfig.domainData
+    return this.$store.state.parserConfig.domainData
   }
 
   get getDomainUrlGroupData () {
-    return this.$store.state.searchsiteConfig.domainUrlGroupData
+    return this.$store.state.parserConfig.domainUrlGroupData
   }
 }
 </script>

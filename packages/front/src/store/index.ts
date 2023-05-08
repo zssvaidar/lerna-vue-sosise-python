@@ -3,7 +3,8 @@ import { createStore } from 'vuex'
 import AuthUser from './modules/AuthUser'
 import Data from './modules/Data'
 import SearchConfig from './modules/SearchConfig'
-import SearchSiteConfig from './modules/SearchSiteConfig'
+import ParserConfig from './modules/ParserConfig'
+import SiteConfig from './modules/SiteConfig'
 
 export interface MyState {
   filters: FilterType[];
@@ -30,6 +31,7 @@ export default createStore({
     AuthUser,
     Data: Data,
     searchconfig: SearchConfig,
-    searchsiteConfig: SearchSiteConfig
+    parserConfig: ParserConfig,
+    siteConfig: SiteConfig
   }
 })

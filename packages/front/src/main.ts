@@ -25,7 +25,7 @@ import AccordionTab from 'primevue/accordiontab'
 import FileUpload from 'primevue/fileupload'
 import Tree2 from './components/Custom/Tree.vue'
 import Checkbox from 'primevue/checkbox'
-
+import AutoComplete from 'primevue/autocomplete'
 // import Tree from 'primevue/tree'
 
 const app = createApp(App)
@@ -45,6 +45,7 @@ app.component('FileUpload', FileUpload)
 app.component('Checkbox', Checkbox)
 // app.component('Tree', Tree)
 app.component('Tree2', Tree2)
+app.component('AutoComplete', AutoComplete)
 
 app.directive('tooltip', Tooltip)
 

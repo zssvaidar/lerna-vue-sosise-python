@@ -59,6 +59,9 @@ export default defineComponent({
     showCollectedData () {
       this.showModal = true
     },
+    startComputePageTagDataType () {
+      this.$store.dispatch('siteConfig/startComputePageTagDataType', { group_id: this.groupId })
+    },
     onClose () {
       this.showModal = false
     },
@@ -79,12 +82,12 @@ export default defineComponent({
       this.findChild(this.groupTagNodes_, node, nodeChecked, 'selectChildTags')
     },
     saveSelectTag () {
-      this.$store.dispatch('searchsiteConfig/updateGroupSelectedTags', { id: this.domainId, group_id: this.groupId, selected_tags: this.selectTag })
+      this.$store.dispatch('parserConfig/updateGroupSelectedTags', { id: this.domainId, group_id: this.groupId, selected_tags: this.selectTag })
       this.reloadPage()
     },
     saveGroupReady () {
       this.groupReady_ = !this.groupReady_
-      this.$store.dispatch('searchsiteConfig/updateGroupReady', { id: this.domainId, group_id: this.groupId, group_ready: this.groupReady_ })
+      this.$store.dispatch('parserConfig/updateGroupReady', { id: this.domainId, group_id: this.groupId, group_ready: this.groupReady_ })
     },
     reloadPage () {
       setTimeout(() => {
@@ -151,7 +154,7 @@ export default defineComponent({
       getKeysFromTree(this.groupTagNodes).forEach((key) => { this.expandedKeys_[key] = true })
     }, 500)
 
-    this.$store.dispatch('searchsiteConfig/fetchGroupCollectedData', { id: this.domainId, group_id: this.groupId })
+    this.$store.dispatch('parserConfig/fetchGroupCollectedData', { id: this.domainId, group_id: this.groupId })
       .then((result) => {
         setTimeout(() => {
           this.groupTagDataTagIds = this.getGroupTagDataTagIds()
@@ -173,6 +176,7 @@ export default defineComponent({
         <h1>Данные группы</h1>
           <div v-if="groupReady_" class='menu-action'>
             <Button @click="showCollectedData" label="Собранные данные"></Button>
+            <Button class="p-button-outlined" @click="startComputePageTagDataType" label="Запустить классификацию данных тега страниц"></Button>
           </div>
           <div class="menu">
             <div>
@@ -329,13 +333,13 @@ export default defineComponent({
 
             <template v-for="(pageUrl, index) in pageUrls" :key="pageUrl.id">
               <div class="col" v-if="index==0">
-                <div class="cell cell-group-action">
+                <div class="cell cell-group-url cell-group">
                   <h3>
                     Тип данных
                   </h3>
                 </div>
                 <template v-for="(groupTagData) in mapGroupTagData" :key="groupTagData.id">
-                  <div class="cell" :class="{'active-modal-page-data-item': (groupTagData.tagId === Number(modalHoveredSiteData))}">
+                  <div class="cell cell-group" :class="{'active-modal-page-data-item': (groupTagData.tagId === Number(modalHoveredSiteData))}">
                     <Dropdown
                     :options="tagDataTypes"
                     optionLabel="label"
@@ -415,6 +419,9 @@ export default defineComponent({
 #url-group {
   .menu-action {
     padding-top: .35rem;
+    *:not(:first-child) {
+      margin-left: .5rem;
+    }
   }
   .menu {
     margin-top: .45rem;
@@ -580,9 +587,11 @@ export default defineComponent({
     .table .cell-group-url {
       width: 30rem;
     }
+    .table .cell-group {
+      width: 10rem;
+    }
     .table .cell-group-action {
       width: 10rem;
-      height: 5.6rem!important;
     }
     .col {
       display: flex;

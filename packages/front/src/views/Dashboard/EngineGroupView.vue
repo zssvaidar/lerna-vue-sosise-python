@@ -31,35 +31,35 @@ export default class EngineGroupView extends Vue {
   domainId
   groupId
   mounted (): void {
-    this.$store.dispatch('searchsiteConfig/fetchUrlGroupData', { id: this.domainId, group_id: this.groupId })
+    this.$store.dispatch('parserConfig/fetchUrlGroupData', { id: this.domainId, group_id: this.groupId })
   }
 
   get getGroupData () {
-    return this.$store.state.searchsiteConfig.groupData
+    return this.$store.state.parserConfig.groupData
   }
 
   get getGroupTags () {
-    return this.$store.state.searchsiteConfig.groupTags
+    return this.$store.state.parserConfig.groupTags
   }
 
   get getGroupTagNodes () {
-    return this.$store.state.searchsiteConfig.groupTagNodes
+    return this.$store.state.parserConfig.groupTagNodes
   }
 
   get getGroupTagsToCollect () {
-    return this.$store.state.searchsiteConfig.groupTagsToCollect
+    return this.$store.state.parserConfig.groupTagsToCollect
   }
 
   get getPageUrls () {
-    return this.$store.state.searchsiteConfig.pageUrls
+    return this.$store.state.parserConfig.pageUrls
   }
 
   get getPagesData () {
-    return this.$store.state.searchsiteConfig.pagesData
+    return this.$store.state.parserConfig.pagesData
   }
 
   get getTagDataTypes () {
-    return this.$store.state.searchsiteConfig.tagDataTypes
+    return this.$store.state.parserConfig.tagDataTypes
   }
 }
 </script>

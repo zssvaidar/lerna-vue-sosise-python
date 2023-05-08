@@ -1,10 +1,9 @@
 import BaseSchema from 'sosise-core/build/Database/BaseSchema';
-import crypto from 'crypto';
 
 /**
  * If you need more information, see: http://knexjs.org/#Schema ; https://www.npmjs.com/package/faker
  */
-export default class User extends BaseSchema {
+export default class SiteDataSearchType extends BaseSchema {
     /**
      * Restrict running the seed only in a local environment (APP_ENV=local)
      */
@@ -13,27 +12,17 @@ export default class User extends BaseSchema {
     /**
      * Table name where data should be inserted in
      */
-    protected tableName = 'user';
+    protected tableName = 'site_data_search_type';
 
     /**
      * Run seed
      */
     public async run(): Promise<void> {
-        const hashPass = crypto.createHash('sha256').update('123').digest('base64');
         // Prepare data to seed
         const data: any = [
-            {   username: 'test@test.kz',
-                email: 'test@test.kz',
-                password: hashPass,
-                is_admin: true,
-                is_active: true
-            },
-            {   username: 'zssvaidar@gmail.com',
-                email: 'zssvaidar@gmail.com',
-                password: hashPass,
-                is_admin: true,
-                is_active: true
-            }
+            { label: 'Категорий', type: 'default' },
+            { label: 'Частота (реже)', type: 'custom_frequency_1' },
+            { label: 'Частота (чаще)', type: 'custom_frequency_2' }
         ];
 
         // Insert to table

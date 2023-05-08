@@ -1,45 +1,42 @@
 <script lang="ts">
 import { Options, Vue } from 'vue-class-component'
-
-// import ScenarioConfigComponent from '@/components/ScenarioConfigComponent.vue' // @ is an alias to /src
+import SearchComponent from '@/components/Search/SearchComponent.vue'
 
   @Options({
     components: {
-      // ScenarioConfigComponent
+      SearchComponent
     }
   })
 
 export default class SearchView extends Vue {
-  get getData () {
-    // return this.$store.state.PbxConfig.languages
-    return []
+  get getDataSearchType () {
+    return this.$store.state.siteConfig.filters
   }
 
-  mounted () {
-    // this.$store.dispatch('fetchApiData', {})
+  get getCategoriesFilter () {
+    return this.$store.state.siteConfig.categoriesFilter
+  }
+
+  get getSuggestions () {
+    return this.$store.state.siteConfig.suggestions
+  }
+
+  mounted (): void {
+    this.$store.dispatch('siteConfig/fetchSearchFilter')
   }
 }
+
 </script>
 <template>
-    <div class="data-search">
-      <div class="wrapper">
-        <section>
-123
-        </section>
-      </div>
-        <!-- <ScenarioConfigComponent
-        :data="getData"
-        /> -->
-    </div>
+  <div id="search-view">
+    <SearchComponent
+      :filters="getDataSearchType"
+      :categoriesFilter="getCategoriesFilter"
+      :suggestions="getSuggestions"
+    />
+  </div>
 </template>
 
 <style scoped>
-.data-search .wrapper {
-  width: 75vw;
-  margin-left: auto;
-  margin-right: auto;
-}
-.data-search .wrapper section {
-  margin-top: 2rem;
-}
+
 </style>

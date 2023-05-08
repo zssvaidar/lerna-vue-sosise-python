@@ -18,14 +18,16 @@ export default class ParserSiteUrlTagData extends BaseSchema {
             table.integer("group_tag_id").unsigned().notNullable();
             table.foreign("group_tag_id").references("parser_group_url_tag_info.id");
             table.string('tag', 1024);
-            table.string('text', 1024);
-            // table.string('xpath', 1024);
+            table.string('text', 4048);
+
             table.json('info');
             table.boolean('has_info').defaultTo(false);
             table.boolean('found').defaultTo(true);
             table.integer("page_id").unsigned().notNullable();
             table.foreign("page_id").references("page_url.id");
 
+            table.integer("text_type_id").unsigned();
+            table.foreign("text_type_id").references("site_dict_tag_text_data_type.id");
             table.unique(['tag_id', 'page_id']);
 
             table.timestamps(true);
