@@ -36,6 +36,39 @@ def get_page_tag_data(get_all_pages=False, group_id = None):
 
     return df
 
+def get_page_tag_data_by_type(get_all_pages=False, group_id = None):
+    #### Initlialize mysql connection
+    db_connection = sql.connect( host='localhost', port= '3306',
+                                database='dp3_database', user='root', password='1234') 
+                                
+    cursor = db_connection.cursor()
+
+    if(get_all_pages):
+        cursor.execute('''
+            SELECT tdType.id data_type_id, tdType.label, ptData.id, ptData.text FROM parser_site_url_tag_data as ptData
+                JOIN page_url AS pUrl
+                    ON ptData.page_id = pUrl.id
+                JOIN site_dict_tag_text_data_type AS tdType
+                    ON ptData.text_type_id = tdType.id
+            WHERE
+                found = 1
+            ORDER BY RIGHT(tdType.id , 2)
+        ''')
+    else:
+        cursor.execute('''
+            SELECT ptData.id, ptData.text FROM parser_site_url_tag_data as ptData
+                JOIN page_url as pUrl
+                ON ptData.page_id = pUrl.id
+            WHERE
+                pUrl.group_id = %s and 
+            found = 1
+        ''' % (group_id))
+
+    table_rows = cursor.fetchall()
+    columns = [d[0] for d in cursor.description]
+    df = pd.DataFrame(table_rows, columns=columns)
+
+    return df
 
 def store_df(df):
     today = date.today()

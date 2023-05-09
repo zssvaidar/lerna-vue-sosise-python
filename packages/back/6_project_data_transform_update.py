@@ -14,8 +14,6 @@ def train_model(lang_path):
     
     df = get_stored_df(lang_path)
 
-    vectorizer = TfidfVectorizer(lowercase=True, stop_words='english')
-
     X = df['text']
     Y = df['target'].values
 
