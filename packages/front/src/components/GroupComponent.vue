@@ -344,7 +344,6 @@ export default defineComponent({
                     :options="tagDataTypes"
                     optionLabel="label"
                     optionValue="id"
-
                     />
                   </div>
                 </template>

@@ -17,13 +17,12 @@ const routes: Array<RouteRecordRaw> = [
   },
   {
     path: '/data-search',
-    name: '',
-    component: SearchView,
-    meta: { requiresAuth: true }
+    name: 'data-search',
+    component: SearchView
   },
   {
     path: '/search-engine',
-    name: '',
+    name: 'search-engine',
     component: SearchEngineView,
     meta: { requiresAuth: true },
     children: [

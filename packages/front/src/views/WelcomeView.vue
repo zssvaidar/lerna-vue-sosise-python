@@ -163,11 +163,6 @@ export default class WelcomeView extends Vue {
 }
 #info_content .p-card {
   flex: 0 0 32%;
-  /* width: 25vw; */
-  /* justify-self: stretch; */
-  /* flex: 1 1; */
-  /* min-width: 20vw; */
-  /* fleex-basis: 30vw; */
   margin: 1rem 0;
 }
 #info_content .p-card .p-card-body .p-card-title {

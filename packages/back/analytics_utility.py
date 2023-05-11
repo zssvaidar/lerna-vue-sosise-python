@@ -36,7 +36,7 @@ def get_page_tag_data(get_all_pages=False, group_id = None):
 
     return df
 
-def get_page_tag_data_by_type(get_all_pages=False, group_id = None):
+def get_page_tag_data_by_type(get_all_pages=False, group_id = None, type = None, value = None):
     #### Initlialize mysql connection
     db_connection = sql.connect( host='localhost', port= '3306',
                                 database='dp3_database', user='root', password='1234') 
@@ -44,16 +44,51 @@ def get_page_tag_data_by_type(get_all_pages=False, group_id = None):
     cursor = db_connection.cursor()
 
     if(get_all_pages):
-        cursor.execute('''
-            SELECT tdType.id data_type_id, tdType.label, ptData.id, ptData.text FROM parser_site_url_tag_data as ptData
-                JOIN page_url AS pUrl
-                    ON ptData.page_id = pUrl.id
-                JOIN site_dict_tag_text_data_type AS tdType
-                    ON ptData.text_type_id = tdType.id
-            WHERE
-                found = 1
-            ORDER BY RIGHT(tdType.id , 2)
-        ''')
+        if(type == 'name'):
+            if(value is not None):
+                cursor.execute('''
+                    SELECT tdType.id data_type_id, tdType.label, ptData.id, ptData.text FROM parser_site_url_tag_data as ptData
+                        JOIN page_url AS pUrl
+                            ON ptData.page_id = pUrl.id
+                        JOIN site_dict_tag_text_data_type AS tdType
+                            ON ptData.text_type_id = tdType.id
+                    WHERE
+                        found = 1
+                        and CHAR_LENGTH(text) < 50
+                        and text LIKE '%'''+value+'''%'
+                    ORDER BY RIGHT(tdType.id , 2)
+                ''')
+            else:
+                 cursor.execute('''
+                    SELECT tdType.id data_type_id, tdType.label, ptData.id, ptData.text FROM parser_site_url_tag_data as ptData
+                        JOIN page_url AS pUrl
+                            ON ptData.page_id = pUrl.id
+                        JOIN site_dict_tag_text_data_type AS tdType
+                            ON ptData.text_type_id = tdType.id
+                    WHERE
+                        found = 1
+                        and (text LIKE '%,%,%'
+                        or text LIKE '%\.%\.%')
+                        and CHAR_LENGTH(text) < 40
+                        and not text REGEXP '[0-9]'
+                    ORDER BY RIGHT(tdType.id , 2)
+                ''')
+            
+        if(type == 'date'):
+            cursor.execute('''
+                SELECT tdType.id data_type_id, tdType.label, ptData.id, ptData.text FROM parser_site_url_tag_data as ptData
+                    JOIN page_url AS pUrl
+                        ON ptData.page_id = pUrl.id
+                    JOIN site_dict_tag_text_data_type AS tdType
+                        ON ptData.text_type_id = tdType.id
+                WHERE
+                    found = 1
+                    and CHAR_LENGTH(text) < 40
+                    # and text LIKE '% % %'
+                    and text REGEXP '[0-9]'
+                    and text not LIKE '%МРНТИ%'
+                ORDER BY RIGHT(tdType.id , 2)
+            ''')
     else:
         cursor.execute('''
             SELECT ptData.id, ptData.text FROM parser_site_url_tag_data as ptData

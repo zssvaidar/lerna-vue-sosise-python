@@ -41,5 +41,11 @@ router.get(
     }
 );
 
+router.get(
+    `/site/searchDataByTagType`,
+    (request: Request, response: Response, next: NextFunction) => {
+        controller.getTagData(request, response, next);
+    }
+);
 
 export default router;

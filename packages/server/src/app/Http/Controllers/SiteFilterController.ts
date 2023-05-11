@@ -104,9 +104,17 @@ export default class SiteFilterController {
                 data: null
             };
 
-            const text = String(request.query.text);
-            
-            httpResponse.data = await this.service.getTagPageInfo(text);
+
+            if(request.query.text) {
+                const text = String(request.query.text);
+                
+                httpResponse.data = await this.service.getTagPageInfo(text);
+            } else if (request.query.tag_type_code) {
+
+                const tagTypeCode = String(request.query.tag_type_code);
+                httpResponse.data = await this.service.getTagPageInfoByTagCode(tagTypeCode);
+            }
+
 
             // Send response
             return response.send(httpResponse);
