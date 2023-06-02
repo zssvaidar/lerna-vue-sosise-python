@@ -81,6 +81,29 @@ export default class SiteInfoController {
     /**
      *
      */
+    public async setGroupTagDataType(request: Request, response: Response, next: NextFunction) {
+        try {
+            // Prepare http response
+            const httpResponse: HttpResponse = {
+                code: 1000,
+                message: 'Success setDomainUrlGroupTags',
+                data: null
+            };
+
+            const groupTagId = Number(request.params.group_tag_id);
+            const tagDataTypeId = request.body.tag_data_type_id;
+            await this.service.updateGroupTagDataType(groupTagId, tagDataTypeId);
+            
+            // Send response
+            return response.send(httpResponse);
+        } catch (error) {
+            next(error);
+        }
+    }
+
+    /**
+     *
+     */
     public async setDomainUrlGroupReady(request: Request, response: Response, next: NextFunction) {
         try {
             // Prepare http response

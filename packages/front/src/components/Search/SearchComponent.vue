@@ -93,6 +93,7 @@ export default defineComponent({
               v-model="filterId"
               optionLabel="label"
               optionValue="id"
+              scrollHeight="25rem"
             />
             <template v-if="filterId == 1">
               <!-- <Dropdown
@@ -109,8 +110,8 @@ export default defineComponent({
                 optionLabel="label"
                 optionValue="code"
                 @change="tagTypeChange"
+                scrollHeight="25rem"
               />
-
               <Dropdown
                 :class="['filter_item']"
                 v-model="tagTypeFilterCode"
@@ -118,6 +119,7 @@ export default defineComponent({
                 optionLabel="text"
                 optionValue="text"
                 @change="tagTypeDataChange"
+                scrollHeight="25rem"
               />
 
              <!--  <Dropdown

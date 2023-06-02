@@ -76,6 +76,14 @@ router.put(
 );
 
 router.put(
+    `/parser/domain/:id/group/:group_id/groupTag/:group_tag_id`,
+    (request: Request, response: Response, next: NextFunction) => {
+        siteInfoController.setGroupTagDataType(request, response, next);
+    }
+);
+
+
+router.put(
     `/parser/domain/:id/group/:group_id/ready`,
     (request: Request, response: Response, next: NextFunction) => {
         siteInfoController.setDomainUrlGroupReady(request, response, next);

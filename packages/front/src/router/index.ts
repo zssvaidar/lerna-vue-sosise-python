@@ -8,6 +8,7 @@ import SearchEngineView from '@/views/Dashboard/SearchEngineView.vue'
 import EngineDomainView from '@/views/Dashboard/EngineDomainView.vue'
 import UrlGroupComponent from '@/components/UrlGroupComponent.vue'
 import EngineGroupView from '@/views/Dashboard/EngineGroupView.vue'
+import FreqWordTaggingView from '@/views/Dashboard/FreqWordTaggingView.vue'
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -50,6 +51,12 @@ const routes: Array<RouteRecordRaw> = [
     component: EngineGroupView,
     meta: { requiresAuth: true },
     props: (route) => ({ domainId: Number(route.params.domainId), groupId: Number(route.params.groupId) })
+  },
+  {
+    path: '/computation/freqWordTagging',
+    name: 'freqWordTagging',
+    component: FreqWordTaggingView,
+    meta: { requiresAuth: true }
   },
   {
     path: '/:catchAll(.*)',

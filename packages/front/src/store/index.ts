@@ -5,6 +5,7 @@ import Data from './modules/Data'
 import SearchConfig from './modules/SearchConfig'
 import ParserConfig from './modules/ParserConfig'
 import SiteConfig from './modules/SiteConfig'
+import FreqConfig from './modules/FreqConfig'
 
 export interface MyState {
   filters: FilterType[];
@@ -32,6 +33,7 @@ export default createStore({
     Data: Data,
     searchconfig: SearchConfig,
     parserConfig: ParserConfig,
-    siteConfig: SiteConfig
+    siteConfig: SiteConfig,
+    freqConfig: FreqConfig
   }
 })

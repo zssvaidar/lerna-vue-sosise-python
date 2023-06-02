@@ -27,9 +27,9 @@ export default class ParserPageUrlGroup extends BaseSchema {
             table.timestamps(true);
         });
 
-        await this.dbConnection.schema.table('page_url', (table) => {
-            table.foreign("group_id").references("parser_url_group.id");
-        });
+        // await this.dbConnection.schema.table('page_url', (table) => {
+        //     table.foreign("group_id").references("parser_url_group.id");
+        // });
     }
 
     /**

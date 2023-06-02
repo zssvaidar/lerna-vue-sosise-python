@@ -6,7 +6,7 @@
         "**/.dock/": true,
         "**/artisan": true,
         "**/docker-compose.yml": true,
-        "**/package.json": true,
+        // "**/package.json": true,
         "**/package-lock.json": true,
         "**/tsconfig.json": true,
         "**/cron": true,
@@ -34,7 +34,7 @@
         "**/.eslintrc.js": true,
         "**/vue.config.js": true,
 
-        "**/requirements.txt": true,
+        // "**/requirements.txt": true,
         "**/myenv/": true,
         "**/__pycache__/": true,
 
@@ -42,8 +42,29 @@
     },
     "workbench.colorCustomizations": {
         "[Hackers Haze]": {
-            "editor.background": "#000000"
+            // "editor.background": "#000000"
         },
-    }
+        "[Tokyo Night Storm]": {
+        }
+    },
+    // "background.customImages": [
+        // "https://c4.wallpaperflare.com/wallpaper/632/790/513/digital-digital-art-artwork-city-lights-hd-wallpaper-preview.jpg"
+    // ],
+    "background.fullscreen": {
+        // "image": "/home/aid/Pictures/AID_enourmous_structure_floating_in_the_sky_e162aebe-4237-41fe-85cc-9e04615b950b.png",
+        // "image": "/home/aid/Pictures/Wallpapers/dema144-5fc10574-fcb1-4c3a-b552-822ea15d0e0b.jpg",
+        // "image": "https://i.pinimg.com/originals/6f/36/cd/6f36cda82ce22a3b55f064d548f8b4b6.png",
+        
+        "size": "cover", // also css, `cover` to self-adaption (recommended)，or `contain`、`200px 200px`
+        "opacity": "0.95",
+        "position": "center", // alias to `background-position`, default `center`
+        // "interval": 0 
+    },
+    "background.enabled": true,
+
+//   "background.style": {
+//     "background-size": "300px 460px",
+//     "opacity": 0.6
+//   }
     
 }

@@ -1,7 +1,7 @@
 import UserRepository from "../app/Repositories/UserRepository";
+import ComputationTextFreqService from "../app/Services/ComputationTextFreqService";
 import CrawlerService from "../app/Services/CrawlerService";
 import InfoParserService from "../app/Services/InfoParserService";
-import MainService from "../app/Services/MainService";
 import ServerScriptService from "../app/Services/ServerScriptService";
 import SiteDataService from "../app/Services/SiteDataService";
 import SiteInfoService from "../app/Services/SiteInfoService";
@@ -33,12 +33,12 @@ const iocConfig = {
      */
     nonSingletons: {
         UserService: () => new UserService(new UserRepository()),
-        MainService: () => new MainService(),
         CrawlerService: () => new CrawlerService(),
         InfoParserService: () => new InfoParserService(),
         ServerScriptService: () => new ServerScriptService(),
         SiteInfoService: () => new SiteInfoService(),
-        SiteDataService: () => new SiteDataService()
+        SiteDataService: () => new SiteDataService(),
+        ComputationTextFreqService: () => new ComputationTextFreqService()
         /**
          * This service is included in the core out of the box
          * If you want to override LoggerService just uncomment this code and import all necessary modules

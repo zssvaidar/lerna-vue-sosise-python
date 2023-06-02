@@ -1,3 +1,6 @@
 node_modules/
 *.zip
 myenv
+dump*
+myenv*
+packages/back/process1.txt

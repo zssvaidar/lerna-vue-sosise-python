@@ -11,6 +11,7 @@ from pathlib import Path
 import hashlib
 import json
 import time
+import fasttext
 
 logging.basicConfig(filename='logs/logs.txt', level=logging.INFO, format='%(asctime)s %(message)s',
                     datefmt='%m/%d/%Y %I:%M:%S %p', filemode="a")  # configure logging file
@@ -217,10 +218,11 @@ class WebCrawler():
             browser = browser_type.launch(headless=False)
             page = browser.new_page()
 
-            timeout = 800
-            page.set_default_navigation_timeout(30000)
-            page.set_default_timeout(timeout)
-            
+            # timeout = 60000
+            page.set_default_navigation_timeout(5000)
+            page.set_default_timeout(200)
+            # page.set_default_timeout(200)
+
             for item in self.page_data:
                 try:
                     filter = UrlPage(item['id'], item['url'], self.tag_data, method_save_data)
@@ -406,7 +408,7 @@ class DomainUrlPath:
 
             self.go_tree_tag_depth(page, element, depth+1, self.ID, tagId)
 
-    def colelct_tag_data(self, page: Page):
+    def collect_tag_data(self, page: Page):
         url = self.domain_url
         
         print(url)
@@ -427,7 +429,7 @@ class DomainUrlPath:
                     self.filter_page_url(page)
                 elif(script == 2):
                     self.parser_data = []
-                    self.colelct_tag_data(page)
+                    self.collect_tag_data(page)
                 tries = self.max_tries
             except Exception as e:
                 print(e)
@@ -446,21 +448,199 @@ class UrlPage:
 
     def save_data(self, domain_id, group_id):
         self.method_save_data(domain_id, group_id, self.page_id, self.parser_data)
+
+    def tag_depth_find(self, page: Page, item: Locator, depth = 0):
+
+        if(max(self.depths) < depth):
+            return
     
+        locator = item.locator('>*')
+        try:
+            tags = locator.evaluate_all("(elements)=> elements.map(element => { return element.tagName })")
+            textContents = locator.evaluate_all("(elements)=> elements.map(element => { var textContent = ''; if(element.childNodes.length > 0) for (let node of element.childNodes)  if(node.nodeType == Node.TEXT_NODE) textContent+=node.textContent; return textContent; })")
+        except Exception as e:
+            print(e)
+            
+        elements = item.locator('>*').all()
+        for idx, element in enumerate(elements):
+            try:
+                if(tags[idx] == 'SCRIPT' or tags[idx] == 'NOSCRIPT' or tags[idx] == 'STYLE'):
+                    continue
+                # self.ID += 1
+                if(textContents[idx].isspace() or textContents[idx] == ''):
+                    self.tag_depth_find(page, element, depth+1)
+                else:
+                    # print([depth_code for depth_code in self.depth_data[depth]] )
+                    # print(self.depth_data[depth] )
+                    # print(len([depth_code for depth_code in self.depth_data[depth] if depth_code not in self.omit_codes]))
+                    if(len(self.depth_data[depth]) == len([depth_code for depth_code in self.depth_data[depth] if depth_code not in self.omit_codes])):
+                        self.tag_depth_find(page, element, depth+1)
+                    else:
+                        print(self.depth_data[depth])
+                        if(depth in self.depths and len(textContents[idx]) > 10 ):
+                            if('pub_cat' in self.depth_data[depth]):
+                                pass
+                            if('pub_type' in self.depth_data[depth]):
+                                pass
+                            if('pub_name' in self.depth_data[depth]):
+                                pass
+                            if('pub_source' in self.depth_data[depth]):
+                                pass
+                            if('pub_theme' in self.depth_data[depth]):
+                                pass
+                            if('pub_content' in self.depth_data[depth]):
+                                # if(len(textContents[idx]) < 30):
+                                    # continue
+                                pass
+                            if('pub_abstract' in self.depth_data[depth]):
+                                pass
+                            if('pub_date' in self.depth_data[depth]):
+                                pass
+                            if('pub_main_link' in self.depth_data[depth]):
+                                pass
+                            if('pub_link' in self.depth_data[depth]):
+                                pass
+                            if('author_name' in self.depth_data[depth]):
+                                pass
+                            if('author_names' in self.depth_data[depth]):
+                                pass
+                            if('author_affiliate' in self.depth_data[depth]):
+                                print(textContents[idx])
+                                pass
+                            if('authors_affiliate' in self.depth_data[depth]):
+                                pass
+                            if('author_degree' in self.depth_data[depth]):
+                                pass
+                            # xpath = xpath_path(element, False).replace('"','\'')
+                            # logging.info(('%s')%(xpath))
+                            # self.parser_data[item['id']]['text'] = textContents
+                        self.tag_depth_find(page, element, depth+1)
+                            
+                    # data = { 'parentId': parent_id, 'tagId': self.ID, 'depth': depth, 'tag': tags[idx], 'text': textContents[idx], 'xpath': xpath }
+                #     logging.info(('ID: %s TAG: %s TEXT: %s PATH: %s')%(self.ID, tags[idx], textContents[idx], xpath))
+                #     # print(data)
+                #     self.parser_data.append(data)
+                #     # print(parent_id, self.ID, 'depth:', depth, 'tag:', tags[idx], 'text:', textContents[idx])
+                # else:
+                #     xpath = xpath_path(element, False).replace('"','\'')
+                #     data = { 'parentId': parent_id, 'tagId': self.ID, 'depth': depth, 'tag': tags[idx], 'text': '', 'xpath': xpath }
+                #     self.parser_data.append(data)
+            except Exception as e:
+                pass
+                # print(e)
+
+            # self.tag_depth_find(page, element, depth+1)
+            
+    # download pre-trained language detection model for Russian, English, and Kazakh
+    # https://fasttext.cc/docs/en/language-identification.html
+
+    # detect language of each text
+    def detect_language(self, model, text):
+    
+        text = text.strip()
+        text = text.replace('\n', '')
+        language = model.predict(text)[0][0][-2:]
+        if language == 'kk':
+            return '1'
+        elif language == 'ru':
+            return '2'
+        elif language == 'en':
+            return '3'
+        else:
+            return ''
+        
     def run_crawling(self, page: Page):
 
+        model_path = 'data/lid.176.bin'
+        model = fasttext.load_model(model_path)
+        
+        ######################################################################### 
+        # Prepare
+        self.depths = list(set([elem['depth'] for elem in self.tag_data]))
+
+        self.depth_data = {}
+
+        # for data in self.tag_data:
+        #     if(data['depth'] not in self.depth_data):
+        #         self.depth_data[data['depth']] = [data['code']]
+        #     elif(data['code'] not in self.depth_data[data['depth']]):
+        #         self.depth_data[data['depth']].append(data['code'])
+
+        # print(self.depth_data)
+        ######################################################################### 
+        
         page.goto(self.url)
+        # page.wait_for_load_state()
+        page.wait_for_timeout(1400)
+
+        # body = page.locator('body')
+        # self.omit_codes = ['pub_name', 'pub_date', 'author_name', 'author_names', 'pub_main_link', 'pub_link']
+        # self.tag_depth_find(page, body)
 
         for item in self.tag_data:
-            self.parser_data[item['id']] = { 'tag': item['tag'], 'group_tag_id': item['id'],'tag_id': item['tagId'] }
+            # text_type_id: item['tagDataTypeId'] 
+            self.parser_data[item['id']] = { 'tag': item['tag'], 'group_tag_id': item['id'],'tag_id': item['tagId'], }
+            # item['tagDataTypeId']
             try:
                 locator = page.locator('xpath=/'+item['xpath']).first
                 textContents = locator.evaluate("(element) => { var textContent = '';if(element.childNodes.length > 0) for (let node of element.childNodes)if(node.nodeType == Node.TEXT_NODE) textContent+=node.textContent; return textContent; }")
+                langId = self.detect_language(model, textContents)
+                if(langId != ''):
+                    self.parser_data[item['id']]['text_type_id'] = langId + str(item['tagDataTypeId'])
+                    logging.info(self.parser_data[item['id']]['text_type_id'])
+                    
                 self.parser_data[item['id']]['text'] = textContents
-                if(item['tag'] == 'A'):
+                if(item['tag'] == 'A'): 
                     href = locator.evaluate("(element)=> element.getAttribute('href') ")
                     if(href is not None):
                         self.parser_data[item['id']]['href'] = href
             except Exception as e:
                 self.parser_data[item['id']] = { 'tag': item['tag'], 'group_tag_id': item['id'], 'tag_id': item['tagId'], 'found': False }
                 logging.error(e)
+
+        # for item in self.tag_data:
+            
+        #     if(item['code'] not in self.omit_codes):
+        #         continue
+
+        #     self.parser_data[item['id']] = { 'tag': item['tag'], 'group_tag_id': item['id'],'tag_id': item['tagId'] }
+        #     try:
+        #         locator = page.locator('xpath=/'+item['xpath']).first
+        #         textContents = locator.evaluate("(element) => { var textContent = '';if(element.childNodes.length > 0) for (let node of element.childNodes)if(node.nodeType == Node.TEXT_NODE) textContent+=node.textContent; return textContent; }")
+        #         self.parser_data[item['id']]['text'] = textContents
+        #         if(item['tag'] == 'A'):
+        #             href = locator.evaluate("(element)=> element.getAttribute('href') ")
+        #             if(href is not None):
+        #                 self.parser_data[item['id']]['href'] = href
+        #     except Exception as e:
+        #         self.parser_data[item['id']] = { 'tag': item['tag'], 'group_tag_id': item['id'], 'tag_id': item['tagId'], 'found': False }
+        #         logging.error(e)
+
+                
+                
+                
+                
+        # for item in self.tag_data
+
+        # locator = item.locator('>*')
+        # try:
+        #     tags = locator.evaluate_all("(elements)=> elements.map(element => { return element.tagName })")
+        #     textContents = locator.evaluate_all("(elements)=> elements.map(element => { var textContent = ''; if(element.childNodes.length > 0) for (let node of element.childNodes)  if(node.nodeType == Node.TEXT_NODE) textContent+=node.textContent; return textContent; })")
+        # except Exception as e:
+        #     print(e)
+
+        # if(self.ID % 200 == 0 and self.ID != 0):
+        #     self.save_data(True)
+
+        # self.parser_data[item['id']] = { 'tag': item['tag'], 'group_tag_id': item['id'],'tag_id': item['tagId'] }
+        # try:
+        #     locator = page.locator('xpath=/'+item['xpath']).first
+        #     textContents = locator.evaluate("(element) => { var textContent = '';if(element.childNodes.length > 0) for (let node of element.childNodes)if(node.nodeType == Node.TEXT_NODE) textContent+=node.textContent; return textContent; }")
+        #     self.parser_data[item['id']]['text'] = textContents
+        #     if(item['tag'] == 'A'):
+        #         href = locator.evaluate("(element)=> element.getAttribute('href') ")
+        #         if(href is not None):
+        #             self.parser_data[item['id']]['href'] = href
+        # except Exception as e:
+        #     self.parser_data[item['id']] = { 'tag': item['tag'], 'group_tag_id': item['id'], 'tag_id': item['tagId'], 'found': False }
+        #     logging.error(e)

@@ -30,12 +30,12 @@ def predict(pipeline, df, freq=False):
 
     test_X = df['text']
     y_pred = pipeline.predict(test_X)
-    
+
     if(freq):
         return pd.DataFrame(y_pred).value_counts()
 
     return y_pred
-    
+
 import sys
 import logging
 
@@ -74,5 +74,5 @@ for _, row in df_ru.iterrows():
 
 for _, row in df_kz.iterrows():
     update_page_data_type(row['id'], { 'text_type_id': row['target'] })
-    
+
 logging.info('end 6_project_data_transform_update')

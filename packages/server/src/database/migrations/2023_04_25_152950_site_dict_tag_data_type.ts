@@ -15,6 +15,7 @@ export default class SiteDictTagDataType extends BaseSchema {
             table.increments('id');
 
             table.string('label');
+            table.string('code');
 
             table.timestamps(true);
         });

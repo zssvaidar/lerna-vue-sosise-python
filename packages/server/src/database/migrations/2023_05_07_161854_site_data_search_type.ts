@@ -16,6 +16,7 @@ export default class SiteDataSearchType extends BaseSchema {
 
             table.string('label');
             table.string('type');
+            table.string('code');
             table.boolean('disabled').defaultTo(false);
 
             table.timestamps(true);

@@ -131,6 +131,15 @@ export default {
         withCredentials: true
       })
       await commit('fetchGroupCollectedData', response.data.data)
+    },
+
+    async setGroupTagType ({ commit }, payload) {
+      await axios({
+        method: 'put',
+        data: payload,
+        url: `${process.env.VUE_APP_API_URL}/parser/domain/${payload.id}/group/${payload.group_id}/groupTag/${payload.group_tag_id}`,
+        withCredentials: true
+      })
     }
 
   }

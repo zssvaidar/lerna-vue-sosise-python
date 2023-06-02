@@ -122,6 +122,7 @@ def transform_text (df):
         # https://kazakhtili.wordpress.com/2010/08/07/kazakh-alphabet/
         text = re.sub(r'[^a-zA-z0-9а-яА-Я-/ғңқүұәөһіҒҢҚҮҰӘӨҺІ\s]', ' ', text, re.IGNORECASE)
         text = re.sub(r'\s+', ' ', text)
+        text = text.lower()
         return text
 
     df['text'] = df['text'].apply(clean_text)

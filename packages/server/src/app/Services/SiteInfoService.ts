@@ -37,7 +37,6 @@ export default class SiteInfoService {
         const domainUrlGroup = await this.getDomainUrlGroup(domainId, groupId);
         const urlGroupTag = await this.getUrlGroupTag(groupId);
         const groupTagsToCollect = await this.getUrlGroupTag(groupId, [1]);
-        console.log(groupTagsToCollect);
         
         const tagDataTypes = await this.getTagDataTypes();
 
@@ -52,6 +51,15 @@ export default class SiteInfoService {
                .where('id', selectedTag)
                .update({ select_tag: value })
         }
+    }
+
+    public async updateGroupTagDataType (groupTagId: number, tagDataTypeId: number): Promise<void> {
+        const table = 'parser_group_url_tag_info';
+
+        await this.client.table(table)
+            .update({ tag_data_type_id: tagDataTypeId})
+            .where('id', groupTagId);
+
     }
 
     public async updateDomainUrlGroupReady (domainId: number, groupId: number, groupReady: boolean): Promise<void> {
@@ -101,7 +109,7 @@ export default class SiteInfoService {
                 continue;
             }
             const tagId = Number(item.tag_id);
-            await this.createPageTagData(pageId, item.group_tag_id, tagId, item.tag, text, item.href);
+            await this.createPageTagData(pageId, item.group_tag_id, tagId, item.tag, text, item.href, item.text_type_id ?? null);
         }
     }
 
@@ -123,7 +131,7 @@ export default class SiteInfoService {
         }
     }
 
-    private async createPageTagData (pageId: number, groupTagId: number, tagId: number, tag: string, text: string, href: string | null = null) {
+    private async createPageTagData (pageId: number, groupTagId: number, tagId: number, tag: string, text: string, href: string | null = null, textTypeId: string | null = null) {
         const table = 'parser_site_url_tag_data';
         const data = {};
         if(!isNull(href)) {
@@ -136,6 +144,9 @@ export default class SiteInfoService {
         data['text'] = text;
         data['tag_id'] = tagId;
         data['group_tag_id'] = groupTagId;
+
+        if(!isNull(textTypeId))
+            data['text_type_id'] = textTypeId
         
         try {
             await this.client.table(table)
@@ -188,7 +199,9 @@ export default class SiteInfoService {
         const table = 'parser_group_url_tag_info';
         const rows = await this.client
             .table(table)
-            .select([ 'id', 'tag_id as tagId', 'parent_id as parentId', 'url_group_id as groupId', 'depth', 'tag', 'text', 'xpath', 'select_tag as selectTag', 'select_child_tags as selectChildTags'])
+            .select([ 'parser_group_url_tag_info.id', 'tag_id as tagId', 'parent_id as parentId', 'url_group_id as groupId', 'depth', 'tag', 'text', 'xpath', 'select_tag as selectTag',
+            'select_child_tags as selectChildTags', 'tag_data_type_id as tagDataTypeId', 'site_dict_tag_data_type.code'])
+            .leftJoin('site_dict_tag_data_type', 'parser_group_url_tag_info.tag_data_type_id', 'site_dict_tag_data_type.id')
             .where('url_group_id', groupId)
             .whereIn('select_tag', active);
 

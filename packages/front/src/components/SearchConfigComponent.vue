@@ -137,7 +137,14 @@ export default defineComponent({
               label="Добавить сайт для пойска"
               @click="visible=true"
             />
-            <Dropdown :style="{ height: '39px' }" />
+            <Button
+              class="p-button p-button-sm"
+              label="Сбор терминов по частоте"
+              @click="visible=true"
+            />
+            <router-link :to="{ name: 'freqWordTagging'}" custom v-slot="{ navigate }">
+              <Button class="p-button-sm" @click="navigate" role="link">Сбор терминов по частоте</Button>
+            </router-link>
 
             <Dialog :class="['search-config']" v-model:visible="visible" :dismissableMask="true" modal header="Добавить аудиофайл" :style="{ width: '35vw' }">
               <div class="form-field">
@@ -145,9 +152,6 @@ export default defineComponent({
                 <InputText type="text" placeholder="https://site.kz, http://site.kz" :class="[{'p-invalid': errors.domainUrl}]" v-model="domainUrl"/>
                 <small v-if="errors.domainUrl"  :class="[{'invalid-small': errors.domainUrl}]" id="username-help">Неверый формат ссылки</small>
               </div>
-              <FileUpload class="pi sm" label="Сохранить" mode="basic" name="demo[]" customUpload accept="audio/*,.wav" :maxFileSize="1000000" :auto="true" @uploader="domainUrl" chooseLabel="Загрузить" >
-              </FileUpload>
-
               <Button class="p-button-sm" label="Сохранить" @click="addDomain" />
             </Dialog>
 

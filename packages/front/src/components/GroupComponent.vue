@@ -52,7 +52,9 @@ export default defineComponent({
       modalHoveredSiteData: 0,
       groupTagDataTagIds: [] as number[],
       mapGroupTagData: {} as any,
-      mapPageTag: {} as any
+      mapPageTag: {} as any,
+
+      dropdownGroupTagDataType: {}
     }
   },
   methods: {
@@ -134,6 +136,9 @@ export default defineComponent({
         obj[data.groupTagId] = data
       }
       return obj
+    },
+    setGroupTagType (e, groupTagId) {
+      this.$store.dispatch('parserConfig/setGroupTagType', { id: this.domainId, group_id: this.groupId, group_tag_id: groupTagId, tag_data_type_id: e.value })
     }
   },
   watch: {
@@ -288,6 +293,23 @@ export default defineComponent({
                           </div>
                         </div>
                       </div>
+
+                      <div class="row-info">
+                        <div class="info-item">
+                          <label>Выбрать тип данных</label>
+                          <div>
+                            <Dropdown
+                              scrollHeight="35rem"
+                              v-model="groupTagToCollect.tagDataTypeId"
+                              :options="tagDataTypes"
+                              optionLabel="label"
+                              optionValue="id"
+                              @change="setGroupTagType($event, groupTagToCollect.id)"
+                              />
+                          </div>
+                        </div>
+                      </div>
+
                     </div>
 
                   </template>
@@ -515,6 +537,9 @@ export default defineComponent({
         padding-right: 1rem;
         &:not(:first-child) {
           margin-top: .45rem;
+        }
+        .p-dropdown {
+          margin-top: .35rem;
         }
       }
       .info-item {

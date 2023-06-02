@@ -16,6 +16,7 @@ export default class DictTagTextDataType extends BaseSchema {
 
             table.string('name');
             table.string('label');
+            table.string('code');
             table.integer('lang_id').unsigned().notNullable()
 
             table.timestamps(true);
