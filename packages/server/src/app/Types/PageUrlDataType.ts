@@ -8,4 +8,5 @@ export default interface PageUrlDataType {
     hasInfo: boolean;
     tagId: number;
     groupTagId: number;
+    url: string;
 }

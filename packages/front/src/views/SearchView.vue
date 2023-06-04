@@ -32,8 +32,12 @@ export default class SearchView extends Vue {
     return this.$store.state.siteConfig.tagTypeFilterData
   }
 
+  get getSiteFilter () {
+    return this.$store.state.siteConfig.siteFilter
+  }
+
   mounted (): void {
-    this.$store.dispatch('siteConfig/fetchSearchFilter')
+    this.$store.dispatch('siteConfig/fetchSearchFilter', {})
   }
 }
 
@@ -46,6 +50,7 @@ export default class SearchView extends Vue {
       :suggestions="getSuggestions"
       :suggestionsData="getSuggestionData"
       :tagTypeFilter="getTagTypeFilter"
+      :siteFilter="getSiteFilter"
       :tagTypeFilterData="getTagTypeFilterData"
     />
   </div>

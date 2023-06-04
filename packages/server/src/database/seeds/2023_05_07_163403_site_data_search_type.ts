@@ -20,9 +20,10 @@ export default class SiteDataSearchType extends BaseSchema {
     public async run(): Promise<void> {
         // Prepare data to seed
         const data: any = [
-            { label: 'Категорий', type: 'default' },
-            { label: 'Частота (реже)', type: 'custom_frequency_1' },
-            { label: 'Частота (чаще)', type: 'custom_frequency_2' }
+            { label: 'Глобальный поиск по категориям', type: 'default' },
+            { label: 'По сайту', type: 'site' },
+            { label: 'По ключевым словам', type: 'keyword' },
+            { label: 'Поиск по типам ner ', type: 'ner' },
         ];
 
         // Insert to table

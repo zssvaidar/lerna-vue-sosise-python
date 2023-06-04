@@ -137,11 +137,6 @@ export default defineComponent({
               label="Добавить сайт для пойска"
               @click="visible=true"
             />
-            <Button
-              class="p-button p-button-sm"
-              label="Сбор терминов по частоте"
-              @click="visible=true"
-            />
             <router-link :to="{ name: 'freqWordTagging'}" custom v-slot="{ navigate }">
               <Button class="p-button-sm" @click="navigate" role="link">Сбор терминов по частоте</Button>
             </router-link>

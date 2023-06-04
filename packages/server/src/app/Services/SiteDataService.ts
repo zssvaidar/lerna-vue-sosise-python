@@ -4,6 +4,7 @@ import IOC from "sosise-core/build/ServiceProviders/IOC";
 import LoggerService from "sosise-core/build/Services/Logger/LoggerService";
 import serviceConfig from "../../config/serviceConfig";
 import PageUrlDataType from "../Types/PageUrlDataType";
+import DomainUrlType from "../Types/Parser/DomainUrlType";
 import CategoryFilterType from "../Types/Site/CategoryFilterType";
 import SiteSearchType from "../Types/Site/SiteSearchType";
 import TagDataTypeType from "../Types/Site/TagDataTypeType";
@@ -19,12 +20,15 @@ export default class SiteDataService {
         this.logging = IOC.make(LoggerService) as LoggerService
     }
 
-    public  async getFilterInfo (): Promise<{ filters: SiteSearchType[], categoriesFilter: CategoryFilterType[], tagTypeFilter: TagDataTypeType[] }> {
+    public  async getFilterInfo (siteId: any): Promise<{ filters: SiteSearchType[], categoriesFilter: CategoryFilterType[], tagTypeFilter: TagDataTypeType[], siteFilter: DomainUrlType[]
+    }> {
         const filters = await this.getFilters();
         const categoriesFilter = await this.getCategoriesFilter();
-        const tagTypeFilter = await this.getTagTypeFilter()
-
-        return { filters, categoriesFilter, tagTypeFilter };
+        const tagTypeFilter = await this.getTagTypeFilter(siteId);
+        console.log(tagTypeFilter);
+        const siteFilter = await this.getSiteFilter();
+        
+        return { filters, categoriesFilter, tagTypeFilter, siteFilter };
     }
 
     public async updatePageTagData (pageTagDataId: number, data: any): Promise<void> {
@@ -55,11 +59,44 @@ export default class SiteDataService {
         return rows;
     }
 
-    public async getTagPageInfo (text: string): Promise<{ suggestionData: {[id: string]: PageUrlDataType[]} }> {
-        const suggestionData: {[id: string]: PageUrlDataType[]} = {}
-        const pageTagData = await this.getTagData(text);
+    public async getTagPageInfo (text: string, siteId: any): Promise<{ suggestionData: {[id: string]: {url: string, data: PageUrlDataType[]}}}> {
+        const suggestionData: {[id: string]: {url: string, data: PageUrlDataType[]}} = {}
+        const pageTagData = await this.getTagData(text, siteId);
         for (const data of pageTagData) {
-            suggestionData[data.pageId] = await this.getAllPageTagData(data)
+            suggestionData[data.pageId] = {
+                url: data.url,
+                data: await this.getAllPageTagData(data)
+            };
+        }
+
+        return { suggestionData };
+    }
+
+    public async getAllTagPageInfo(): Promise<{ suggestionData: {[id: string]: {url: string, data: PageUrlDataType[]}}}> {
+        const suggestionData: {[id: string]: {url: string, data: PageUrlDataType[]}} = {}
+
+        const raw = await this.client.raw(`
+            SELECT
+                parser_site_url_tag_data.id,
+                tag as tag,
+                text as text,
+                found as found,
+                page_id as pageId,
+                info,
+                has_info as hasInfo,
+                tag_id as tagId,
+                group_tag_id as groupTagId,
+                page_url.url
+            FROM parser_site_url_tag_data
+            join page_url on page_url.id = page_id
+            limit 3000
+        `)
+        const pageTagData = raw[0];
+        for (const data of pageTagData) {
+            suggestionData[data.pageId] = {
+                url: data.url,
+                data: await this.getAllPageTagData(data)
+            };
         }
 
         return { suggestionData };
@@ -80,7 +117,7 @@ export default class SiteDataService {
 
                 max(parser_site_url_tag_data.text_type_id) text_type_id,
                 max(site_dict_tag_text_data_type.label) label,
-                max(site_dict_tag_text_data_type.name) name,
+                max(site_dict_tag_text_data_type.code) name,
                 RIGHT (max(parser_site_url_tag_data.text_type_id), 2)
             FROM parser_site_url_tag_data
             JOIN site_dict_tag_text_data_type
@@ -112,7 +149,8 @@ export default class SiteDataService {
 
                 'parser_site_url_tag_data.text_type_id',
                 'site_dict_tag_text_data_type.label',
-                'site_dict_tag_text_data_type.name',
+                'site_dict_tag_text_data_type.code',
+                'site_dict_tag_text_data_type.code as name',
             ])
             .join('site_dict_tag_text_data_type', 'site_dict_tag_text_data_type.id', 'parser_site_url_tag_data.text_type_id')
             .where('page_id', data.pageId)
@@ -121,10 +159,10 @@ export default class SiteDataService {
         return rows
     }
 
-    private async getTagData(text: string): Promise<PageUrlDataType[]> {
-        const raw = await this.client.raw(`
+    private async getTagData(text: string, siteId: any): Promise<PageUrlDataType[]> {
+        let query = `
             SELECT
-                id,
+                parser_site_url_tag_data.id,
                 tag as tag,
                 text as text,
                 found as found,
@@ -132,11 +170,17 @@ export default class SiteDataService {
                 info,
                 has_info as hasInfo,
                 tag_id as tagId,
-                group_tag_id as groupTagId
+                group_tag_id as groupTagId,
+                page_url.url
             FROM parser_site_url_tag_data
+            join page_url on page_url.id = page_id
             WHERE 
                 text LIKE '%${text}%'
-        `)
+                
+        `;
+        if(siteId)
+            query += ` and page_url.domain_id = ${siteId}`;
+        const raw = await this.client.raw(query)
         const rows = raw[0];
 
         return rows;
@@ -163,7 +207,21 @@ export default class SiteDataService {
         return rows;
     }
 
-    private async getTagTypeFilter (): Promise<TagDataTypeType[]> {
+    private async getTagTypeFilter (siteId: any): Promise<TagDataTypeType[]> {
+
+        let query = `SELECT site_dict_tag_text_data_type.id 
+            FROM site_dict_tag_text_data_type 
+            JOIN parser_site_url_tag_data 
+                ON parser_site_url_tag_data.text_type_id = site_dict_tag_text_data_type.id
+        `;
+
+        if(siteId)
+            query += ` JOIN page_url on page_url.id = parser_site_url_tag_data.page_id
+            JOIN domain_url on page_url.domain_id = domain_url.id
+            WHERE domain_url.id = ${siteId}`
+
+        console.log(query);
+            
         const raw = await this.client.raw(`
             SELECT
                 MAX(id) id,
@@ -173,16 +231,20 @@ export default class SiteDataService {
                 MAX(lang_id) langId
             FROM site_dict_tag_text_data_type
             WHERE
-                id IN (SELECT site_dict_tag_text_data_type.id 
-                    FROM site_dict_tag_text_data_type 
-                    JOIN parser_site_url_tag_data 
-                        ON parser_site_url_tag_data.text_type_id = site_dict_tag_text_data_type.id
-                )
-                and RIGHT(id, 2) not in ('04')
+                id IN (${query})
+                and RIGHT(id, 2)
             GROUP BY RIGHT(id, 2)
         `)
         const rows = raw[0];
 
         return rows;
+    }
+
+    public async getSiteFilter(): Promise<DomainUrlType[]> {
+        const table = "domain_url";
+        const rows  = await this.client.table(table).select(['id','url', 'name', 'created_at as createdAt']);
+
+        return rows;
+
     }
 }

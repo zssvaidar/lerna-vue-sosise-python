@@ -40,7 +40,7 @@ export default class DictTagTextDataType extends BaseSchema {
             { id: 118, lang_id: 1, code: 'author_affiliate',label: 'Аффилиация автора' },
             { id: 119, lang_id: 1, code: 'authors_affiliate',label: 'Аффилиация авторов' },
             { id: 120, lang_id: 1, code: 'author_degree',label: 'Степень автора' },
-            { id: 121, lang_id: 1, code: 'noice',label: 'Шум' },
+            { id: 121, lang_id: 1, code: 'noise',label: 'Шум' },
             { id: 122, lang_id: 1, code: 'termin', label: 'Термин' },
 
             { id: 201, lang_id: 2, code: 'pub_cat', label: 'Категория публикаций' },
@@ -63,7 +63,7 @@ export default class DictTagTextDataType extends BaseSchema {
             { id: 218, lang_id: 2, code: 'author_affiliate',label: 'Аффилиация автора' },
             { id: 219, lang_id: 2, code: 'authors_affiliate',label: 'Аффилиация авторов' },
             { id: 220, lang_id: 2, code: 'author_degree',label: 'Степень автора' },
-            { id: 221, lang_id: 2, code: 'noice', label: 'Шум' },
+            { id: 221, lang_id: 2, code: 'noise', label: 'Шум' },
             { id: 222, lang_id: 2, code: 'termin', label: 'Термин' },
 
             { id: 301, lang_id: 3, code: 'pub_cat', label: 'Категория публикаций' },
@@ -86,7 +86,7 @@ export default class DictTagTextDataType extends BaseSchema {
             { id: 318, lang_id: 3, code: 'author_affiliate',label: 'Аффилиация автора' },
             { id: 319, lang_id: 3, code: 'authors_affiliate',label: 'Аффилиация авторов' },
             { id: 320, lang_id: 3, code: 'author_degree',label: 'Степень автора' },
-            { id: 321, lang_id: 3, code: 'noice',label: 'Шум' },
+            { id: 321, lang_id: 3, code: 'noise',label: 'Шум' },
             { id: 322, lang_id: 3, code: 'termin', label: 'Термин' },
 
             // { id: 200, lang_id: 1, label: 'Шум', name: 'noise' },

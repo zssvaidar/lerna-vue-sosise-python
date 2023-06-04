@@ -13,11 +13,6 @@ import FreqWordTaggingView from '@/views/Dashboard/FreqWordTaggingView.vue'
 const routes: Array<RouteRecordRaw> = [
   {
     path: '/',
-    name: 'welcome',
-    component: WelcomeView
-  },
-  {
-    path: '/data-search',
     name: 'data-search',
     component: SearchView
   },

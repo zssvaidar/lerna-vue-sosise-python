@@ -33,7 +33,7 @@ export default class InfoParserService extends AbstractParser{
 
     public async findPageGroupUrls(domainId: number, split: number): Promise<PageGroupUrl[]> {
         const raw = await this.client.raw(`
-            select min(domain_id) domainId, min(id) pageId, subq.groupUrl, ${split} split, min(url) url, subq.ids pageIds, min(subq.c) count
+            select min(domain_id) domainId, min(id) pageId, subq.groupUrl, SUBSTRING_INDEX(subq.groupUrl, '/', -1) groupLabel, ${split} split, min(url) url, subq.ids pageIds, min(subq.c) count
             from (
                 select group_concat(';', id, ';') search_ids, JSON_ARRAYAGG(id) ids, SUBSTRING_INDEX(url, '/', ${split}) groupUrl, count(*) c
                 from page_url
@@ -67,6 +67,7 @@ export default class InfoParserService extends AbstractParser{
                 url: groupUrl.url,
                 page_ids: JSON.stringify(groupUrl.pageIds),
                 group_url: groupUrl.groupUrl,
+                group_label: groupUrl.groupLabel,
                 count: groupUrl.count,
             });
         }
@@ -78,7 +79,8 @@ export default class InfoParserService extends AbstractParser{
         const table = 'parser_url_group';
 
         const rows = await this.client.table(table)
-            .select([ 'id', 'domain_id as domainId', 'page_id as pageId', 'split as split', 'url as url', 'page_ids as pageIds', 'group_url as groupUrl', 'count as count', 'group_ready as groupReady'])
+            .select([ 'id', 'domain_id as domainId', 'page_id as pageId', 'split as split', 'url as url', 
+            'page_ids as pageIds', 'group_url as groupUrl', 'group_label as groupLabel', 'count as count', 'group_ready as groupReady'])
             .where('domain_id', domainId)
             .modify(function(queryBuilder) {
                 if (!isNull(split)) {

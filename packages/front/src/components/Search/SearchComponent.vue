@@ -24,6 +24,10 @@ export default defineComponent({
       type: Array as PropType<any[]>,
       required: true
     },
+    siteFilter: {
+      type: Array as PropType<any[]>,
+      required: true
+    },
     tagTypeFilterData: {
       type: Array as PropType<any[]>,
       required: true
@@ -31,19 +35,26 @@ export default defineComponent({
   },
   data () {
     return {
-      inputText: { id: -1, text: '' } as any,
-      inputTextOld: '',
+      inputText: '' as any,
       bounceTimer: undefined as any,
-      filterId: 1,
+      filterModel: { } as any,
       categoryFilterId: 1,
-      tagTypeFilterCode: '01'
+      tagTypeFilterCode: '03',
+      tagTypeFilterValue: {} as any,
+      siteFilterModel: {} as any
     }
   },
   methods: {
+    addSite (data) {
+      if (Object.keys(this.siteFilterModel).length) {
+        data.siteId = this.siteFilterModel.id
+      }
+      return data
+    },
     searchTimeOut (e) {
-      this.inputTextOld = this.inputText
       if (e.keyCode === 13) {
-        this.$store.dispatch('siteConfig/searchDataByText', { filter_id: this.filterId, text: this.inputText })
+        const data = { filter_id: this.filterModel.id, text: this.inputText }
+        this.$store.dispatch('siteConfig/searchDataByText', this.addSite(data))
         return
       }
 
@@ -52,25 +63,40 @@ export default defineComponent({
         this.bounceTimer = null
       }
       this.bounceTimer = setTimeout(() => {
-        this.$store.dispatch('siteConfig/searchSuggestonsByText', { filter_id: this.filterId, text: this.inputText })
-      }, 800)
+        const data = { filter_id: this.filterModel.id, text: this.inputText }
+        this.$store.dispatch('siteConfig/searchDataByText', this.addSite(data))
+        this.$store.dispatch('siteConfig/searchSuggestonsByText', this.addSite(data))
+      }, 250)
     },
     dropdownSelect (e) {
-      this.inputText.text = this.inputTextOld + e.value.text
-      this.$store.dispatch('siteConfig/searchDataByText', { filter_id: this.filterId, text: this.inputText.text })
+      this.inputText = e.value.text
+      const data = { filter_id: this.filterModel.id, text: this.inputText.text }
+
+      this.$store.dispatch('siteConfig/searchDataByText', this.addSite(data))
     },
     tagTypeChange (e) {
-      this.$store.dispatch('siteConfig/searchSuggestonsByTagType', { tag_type_code: e.value })
+      const data = { tag_type_code: e.value }
+      this.$store.dispatch('siteConfig/searchSuggestonsByTagType', this.addSite(data))
     },
     tagTypeDataChange (e) {
-      this.$store.dispatch('siteConfig/searchDataByText', { filter_id: this.filterId, text: e.value })
+      const data = { filter_id: this.filterModel.id, text: e.value }
+      this.$store.dispatch('siteConfig/searchDataByText', this.addSite(data))
     }
   },
   watch: {
+    filterModel (n) {
+      if (n.type !== 'site') {
+        this.siteFilterModel = {}
+      }
+    },
+    siteFilterModel (n) {
+      this.$store.dispatch('siteConfig/fetchSearchFilter', { siteId: n.id })
+    }
   },
   mounted () {
     setTimeout(() => {
-      this.$store.dispatch('siteConfig/searchDataByText', { filter_id: this.filterId, text: 'Стать' })
+      this.filterModel = this.filters[0]
+      this.$store.dispatch('siteConfig/searchDataByText', { filter_id: this.filterModel.id, text: '*' })
     }, 500)
   }
 })
@@ -90,12 +116,11 @@ export default defineComponent({
             <Dropdown
               :class="['filter_item']"
               :options="filters"
-              v-model="filterId"
+              v-model="filterModel"
               optionLabel="label"
-              optionValue="id"
               scrollHeight="25rem"
             />
-            <template v-if="filterId == 1">
+            <template v-if="filterModel.type == 'default'">
               <!-- <Dropdown
                 :class="['filter_item']"
                 :options="categoriesFilter"
@@ -114,7 +139,7 @@ export default defineComponent({
               />
               <Dropdown
                 :class="['filter_item']"
-                v-model="tagTypeFilterCode"
+                v-model="tagTypeFilterValue"
                 :options="tagTypeFilterData"
                 optionLabel="text"
                 optionValue="text"
@@ -129,74 +154,116 @@ export default defineComponent({
                 optionLabel="label"
                 optionValue="id"
               /> -->
+            </template>
+
+            <template v-if="filterModel.type == 'site'">
+              <Dropdown
+                :class="['filter_item']"
+                v-model="siteFilterModel"
+                :options="siteFilter"
+                optionLabel="name"
+                scrollHeight="25rem"
+              />
+              <template v-if="Object.keys(siteFilterModel).length">
+                <Dropdown
+                  :class="['filter_item']"
+                  v-model="tagTypeFilterCode"
+                  :options="tagTypeFilter"
+                  optionLabel="label"
+                  optionValue="code"
+                  @change="tagTypeChange"
+                  scrollHeight="25rem"
+                />
+
+                <Dropdown
+                  :class="['filter_item']"
+                  v-model="tagTypeFilterValue"
+                  :options="tagTypeFilterData"
+                  optionLabel="text"
+                  optionValue="text"
+                  @change="tagTypeDataChange"
+                  scrollHeight="25rem"
+                />
+              </template>
+
+            </template>
+
+            <template v-if="filterModel.type == 'keyword'">
+              keyword
+            </template>
+
+            <template v-if="filterModel.type == 'ner'">
+              ner
+            </template>
+
+            <template v-if="filterModel.type == 'default' || filterModel.type == 'site'">
               <div class="filter_item p-input-icon-left">
                   <i class="pi pi-search" />
                   <AutoComplete v-model="inputText" type="text" optionLabel="text" :suggestions="suggestions"
-                  @keyup="searchTimeOut" @item-select="dropdownSelect" placeholder="текст для поиска" >
+                  @keyup="searchTimeOut" @item-select="dropdownSelect" placeholder="текст для поиска">
                     <template #option="slotProps">
                       <div class="flex align-options-center">
-                          <div>{{inputText + slotProps.option.text }}</div>
+                          <div>{{ slotProps.option.text }}</div>
                       </div>
                   </template>
                   </AutoComplete>
               </div>
             </template>
-            <template v-if="filterId == 2 || filterId == 3">
-              <div class="filter_item p-input-icon-left">
-                  <i class="pi pi-search" />
-                  <InputText v-model="inputText" type="text"  @keyup="searchTimeOut" placeholder="текст для поиска" />
-              </div>
-            </template>
           </div>
 
           <div class="menu-content">
-
             <template v-for="(suggestionData, key) in suggestionsData" :key="key">
-              <Card v-if="Object.entries(suggestionData).length>=2">
+              <!-- suggestionData  -->
+              <Card v-if="Object.entries(suggestionData.data).length>=2">
                 <template #header>
                   <img class="header"  src="@/assets/img/IPSNewLifeBiologics1.png">
                 </template>
-
                 <template #title>
                   <h3 class="title">
-                    <a v-for="title of suggestionData.title" :key="title" class="text"
-                      href="#">
+                    <a v-for="title of suggestionData.data.pub_title" :key="title" class="text"
+                      :href="suggestionData.url">
                       {{ title.text }}
                       <br/>
                     </a>
                   </h3>
                 </template>
 
-                <template v-if="suggestionData.name || suggestionData.date" #subtitle>
-                  <h3 v-if="suggestionData.name">Авторы:</h3>
-                  <span v-for="name of suggestionData.name" :key="name">
+                <template v-if="suggestionData.data.author_names || suggestionData.data.author_name || suggestionData.data.date" #subtitle>
+                  <h3 v-if="suggestionData.data.author_name">Автор:</h3>
+                  <span v-for="name of suggestionData.data.author_name" :key="name">
                     {{ name.text }}
                   </span>
+                  <h3 v-if="suggestionData.data.author_names">Авторы:</h3>
+                  <span v-for="name of suggestionData.data.author_names" :key="name">
+                    {{ name.text }}
+                  </span>
+                  <br/>
+                  <br/>
                   <h3>Даты:</h3>
-                  <span v-for="date of suggestionData.date" :key="date">
+                  <span v-for="date of suggestionData.data.pub_date" :key="date">
                     {{ date.text }}
                   </span>
                 </template>
-
+                Термин
                 <template #content>
-                  <div class="content-item keywords" v-if="suggestionData.termin">
+                  <div class="content-item keywords" v-if="suggestionData.data.termin">
                     <h3>Термины:</h3>
-                    <span v-for="termin of suggestionData.termin" :key="termin">
+                    <span v-for="termin of suggestionData.data.termin" :key="termin">
                       {{ termin.text }}
                     </span>
                   </div>
-                  <div class="abstract" v-if="suggestionData.content">
+                  <div class="abstract" v-if="suggestionData.data.pub_content">
                     <h3>Описание:</h3>
-                    <temmplate v-for="content of suggestionData.content" :key="content">
+                    <temmplate v-for="content of suggestionData.data.pub_content" :key="content">
                       {{ content.text }}
                     </temmplate>
 
                   </div>
 
-                  <div class="contet-itnem metas" v-if="suggestionData.tag">
+                  <div class="contet-itnem metas" v-if="suggestionData.data.tag">
                     <h3>Теги:</h3>
                     <span>
-                      <div v-for="tag of suggestionData.tag" :key="tag" class="text">
+                      <div v-for="tag of suggestionData.data.tag" :key="tag" class="text">
                         {{ tag.text }}
                         <br>
                       </div>
@@ -245,6 +312,10 @@ export default defineComponent({
         margin-left: 1rem;
       }
     }
+  }
+  .menu-actions .filter_item {
+    // .p-dropdown * {
+      // }
   }
 
   .menu {

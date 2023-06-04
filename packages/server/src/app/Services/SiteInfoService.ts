@@ -147,7 +147,7 @@ export default class SiteInfoService {
 
         if(!isNull(textTypeId))
             data['text_type_id'] = textTypeId
-        
+
         try {
             await this.client.table(table)
                 .insert(data);

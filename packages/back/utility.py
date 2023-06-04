@@ -219,8 +219,7 @@ class WebCrawler():
             page = browser.new_page()
 
             # timeout = 60000
-            page.set_default_navigation_timeout(5000)
-            page.set_default_timeout(200)
+            page.set_default_navigation_timeout(10000)
             # page.set_default_timeout(200)
 
             for item in self.page_data:
@@ -547,7 +546,7 @@ class UrlPage:
         elif language == 'en':
             return '3'
         else:
-            return ''
+            return None
         
     def run_crawling(self, page: Page):
 
@@ -571,7 +570,8 @@ class UrlPage:
         
         page.goto(self.url)
         # page.wait_for_load_state()
-        page.wait_for_timeout(1400)
+        page.wait_for_load_state()
+        # page.wait_for_timeout(1400)
 
         # body = page.locator('body')
         # self.omit_codes = ['pub_name', 'pub_date', 'author_name', 'author_names', 'pub_main_link', 'pub_link']
@@ -585,10 +585,13 @@ class UrlPage:
                 locator = page.locator('xpath=/'+item['xpath']).first
                 textContents = locator.evaluate("(element) => { var textContent = '';if(element.childNodes.length > 0) for (let node of element.childNodes)if(node.nodeType == Node.TEXT_NODE) textContent+=node.textContent; return textContent; }")
                 langId = self.detect_language(model, textContents)
-                if(langId != ''):
-                    self.parser_data[item['id']]['text_type_id'] = langId + str(item['tagDataTypeId'])
+                if(langId != None):
+                    self.parser_data[item['id']]['text_type_id'] = langId
+                    if(len(str(item['tagDataTypeId'])) == 1):
+                       self.parser_data[item['id']]['text_type_id'] += '0' 
+                    self.parser_data[item['id']]['text_type_id'] += str(item['tagDataTypeId'])
                     logging.info(self.parser_data[item['id']]['text_type_id'])
-                    
+ 
                 self.parser_data[item['id']]['text'] = textContents
                 if(item['tag'] == 'A'): 
                     href = locator.evaluate("(element)=> element.getAttribute('href') ")

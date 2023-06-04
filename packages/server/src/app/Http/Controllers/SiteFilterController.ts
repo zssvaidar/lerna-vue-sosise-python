@@ -25,7 +25,9 @@ export default class SiteFilterController {
                 data: null
             };
 
-            httpResponse.data = await this.service.getFilterInfo();
+            const siteId = request.query.siteId;
+            
+            httpResponse.data = await this.service.getFilterInfo(siteId);
 
             // Send response
             return response.send(httpResponse);
@@ -87,7 +89,7 @@ export default class SiteFilterController {
             const text = String(request.query.text);
             
             httpResponse.data = await this.service.getTagDataSearch(text);
-
+            
             // Send response
             return response.send(httpResponse);
         } catch (error) {
@@ -105,12 +107,14 @@ export default class SiteFilterController {
             };
 
 
+            if(request.query.text == '*') {
+                httpResponse.data = await this.service.getAllTagPageInfo();
+            } else
             if(request.query.text) {
                 const text = String(request.query.text);
                 
-                httpResponse.data = await this.service.getTagPageInfo(text);
+                httpResponse.data = await this.service.getTagPageInfo(text, request.query.siteId);
             } else if (request.query.tag_type_code) {
-
                 const tagTypeCode = String(request.query.tag_type_code);
                 httpResponse.data = await this.service.getTagPageInfoByTagCode(tagTypeCode);
             }

@@ -21,15 +21,16 @@ export default class ParserPageUrlGroup extends BaseSchema {
             table.string('url');
             table.specificType('page_ids', 'VARCHAR(2048)');
             table.string('group_url').unique();
+            table.string('group_label');
             table.integer('count');
             table.boolean('group_ready').defaultTo(false);
 
             table.timestamps(true);
         });
 
-        // await this.dbConnection.schema.table('page_url', (table) => {
-        //     table.foreign("group_id").references("parser_url_group.id");
-        // });
+        await this.dbConnection.schema.table('page_url', (table) => {
+            table.foreign("group_id").references("parser_url_group.id");
+        });
     }
 
     /**

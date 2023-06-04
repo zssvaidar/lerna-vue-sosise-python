@@ -23,11 +23,6 @@ export default {
           to: '/'
         },
         {
-          label: 'Поиск',
-          icon: 'pi pi-fw pi-search',
-          to: '/data-search'
-        },
-        {
           label: 'Сбор данных',
           visible: (args) => this.getUser().isAdmin ?? false,
           icon: 'pi pi-fw pi-database',
